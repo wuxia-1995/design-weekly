@@ -878,16 +878,16 @@
   /* === 往期归档卡片网格 === */
   .archive { padding: 0 0 120px; }
   .archive-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;
   }
   .arc-card {
     display: block; padding: 0; background: var(--paper-2);
-    border: 1px solid var(--line-soft); border-radius: 8px;
+    border: 1px solid var(--line); border-radius: 8px;
     overflow: hidden;
     transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
   .arc-card:hover {
-    transform: translateY(-4px); box-shadow: 0 16px 40px #10182014;
+    transform: translateY(-4px); box-shadow: 0 16px 40px rgba(91,140,255,0.12);
     border-color: var(--blue-strong);
   }
   .arc-cover {
