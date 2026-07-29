@@ -2289,46 +2289,57 @@
   ];
 
   // ========== 动态更新所有展示位置 ==========
+  // 两个独立概念：
+  //   latest    = id 最大的记录 → "本期"链接指向的期数（最新发布）
+  //   homepage  = 与 index.html 正文内容一致的期数（Hero 区展示的期数）
   (function () {
-    const latest = issues[0]; // 已按 id 降序排列
+    const latest = issues[0]; // id 最大 = 最新发布
 
-    // 1. Topbar "本期" 链接 → 最新期数文件
-    const topbarLink = document.getElementById("topbar-latest");
+    // ⚠️ 修改这个值来切换首页正文展示的是哪一期
+    const homepageId = 1;
+    const homepage = issues.find(function (i) { return i.id === homepageId; }) || latest;
+
+    // 1. Topbar "本期" 链接 → 最新发布期数
+    var topbarLink = document.getElementById("topbar-latest");
     if (topbarLink) topbarLink.href = latest.file;
 
-    // 2. 侧边栏副标题 → 最新期数
-    const sidebarSub = document.getElementById("sidebar-subtitle");
-    if (sidebarSub) sidebarSub.textContent = latest.num + " · " + latest.week;
+    // 2. 侧边栏副标题 → 首页正文期数（与 Hero 一致）
+    var sidebarSub = document.getElementById("sidebar-subtitle");
+    if (sidebarSub) sidebarSub.textContent = homepage.num + " · " + homepage.week;
 
-    // 3. Hero 区 → 最新期数元数据
-    const heroSub = document.getElementById("hero-sub");
-    if (heroSub) heroSub.textContent = latest.subtitle;
+    // 3. Hero 区 → 首页正文期数（保证与下方内容一致）
+    var heroSub = document.getElementById("hero-sub");
+    if (heroSub) heroSub.textContent = homepage.subtitle;
 
-    const latestWeek = document.getElementById("latest-week");
-    if (latestWeek) latestWeek.textContent = latest.week;
+    var latestWeek = document.getElementById("latest-week");
+    if (latestWeek) latestWeek.textContent = homepage.week;
 
-    const latestDate = document.getElementById("latest-date");
-    if (latestDate) latestDate.textContent = latest.date;
+    var latestDate = document.getElementById("latest-date");
+    if (latestDate) latestDate.textContent = homepage.date;
 
-    const issueCount = document.getElementById("issue-count");
+    var issueCount = document.getElementById("issue-count");
     if (issueCount) issueCount.textContent = issues.length;
 
-    // 4. 往期回顾 → 自动生成卡片（按时间倒序）
-    const archiveGrid = document.getElementById("archive-grid");
+    // 4. 往期回顾 → 自动生成卡片（按时间倒序，排除首页正在展示的）
+    var archiveGrid = document.getElementById("archive-grid");
     if (archiveGrid) {
       archiveGrid.innerHTML = issues
+        .filter(function (i) { return i.id !== homepageId; })
         .map(
-          (i) => `
-        <a href="${i.file}" class="arc-card">
-          <div class="arc-body">
-            <div class="arc-date">${i.date} · ${i.num} · ${i.week}</div>
-            <h3>${i.title}</h3>
-            <p class="arc-summary">${i.subtitle}</p>
-            <div class="arc-tags">
-              ${i.tags.map((t) => "<span>" + t + "</span>").join("")}
-            </div>
-          </div>
-        </a>`
+          function (i) {
+            return (
+              '<a href="' + i.file + '" class="arc-card">' +
+              '<div class="arc-body">' +
+              '<div class="arc-date">' + i.date + ' · ' + i.num + ' · ' + i.week + '</div>' +
+              '<h3>' + i.title + '</h3>' +
+              '<p class="arc-summary">' + i.subtitle + '</p>' +
+              '<div class="arc-tags">' +
+              i.tags.map(function (t) { return '<span>' + t + '</span>'; }).join("") +
+              '</div>' +
+              '</div>' +
+              '</a>'
+            );
+          }
         )
         .join("");
     }
