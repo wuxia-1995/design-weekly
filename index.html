@@ -1233,7 +1233,7 @@
     </a>
     <div class="spacer"></div>
     <nav>
-      <a href="第2期-智能画布与设计新秩序.html">本期</a>
+      <a id="topbar-latest" href="第2期-智能画布与设计新秩序.html">本期</a>
       <a href="#archive">往期回顾</a>
     </nav>
     <button class="theme-toggle" id="themeToggle" aria-label="切换深浅色模式">
@@ -1251,7 +1251,7 @@
       <div class="sidebar-logo">🎨</div>
       <div class="sidebar-title-wrap">
         <div class="sidebar-title">设计周刊</div>
-        <div class="sidebar-subtitle">第 1 期 · WEEK 31</div>
+        <div class="sidebar-subtitle" id="sidebar-subtitle">第 1 期 · WEEK 31</div>
       </div>
     </div>
     <button class="sidebar-more-btn" id="sidebarClose" aria-label="收起目录">
@@ -2240,20 +2240,7 @@
 
 <section class="archive">
   <div class="wrap">
-    <div class="archive-grid">
-      <a href="第2期-智能画布与设计新秩序.html" class="arc-card">
-        <div class="arc-body">
-          <div class="arc-date">2026.07.29 · 第 002 期 · WEEK 31</div>
-          <h3>智能画布与设计新秩序</h3>
-          <p class="arc-summary">Figma 智能画布重塑设计协作，iF 设计趋势报告揭示反 AI 同质化</p>
-          <div class="arc-tags">
-            <span>Figma</span>
-            <span>iF设计奖</span>
-            <span>设计趋势</span>
-          </div>
-        </div>
-      </a>
-    </div>
+    <div class="archive-grid" id="archive-grid"></div>
   </div>
 </section>
 
@@ -2276,6 +2263,77 @@
 <a href="#top" class="back-top" id="backTop">↑</a>
 
 <script>
+  // ========== Issue 数据源 ==========
+  // 按 id 降序排列（最新在最前），新增期数只需在此数组中追加即可
+  const issues = [
+    {
+      id: 2,
+      num: "第 002 期",
+      week: "WEEK 31",
+      date: "2026.07.29",
+      title: "智能画布与设计新秩序",
+      subtitle: "Figma 智能画布重塑设计协作，iF 设计趋势报告揭示反 AI 同质化",
+      file: "第2期-智能画布与设计新秩序.html",
+      tags: ["Figma", "iF设计奖", "设计趋势"]
+    },
+    {
+      id: 1,
+      num: "第 001 期",
+      week: "WEEK 31",
+      date: "2026.07.27",
+      title: "鸿蒙斩获红点最高奖，AI 驱动设计成主流",
+      subtitle: "鸿蒙斩获红点最高奖，AI 驱动设计成主流",
+      file: "design weekly A.html",
+      tags: ["红点奖", "HarmonyOS", "AI设计"]
+    }
+  ];
+
+  // ========== 动态更新所有展示位置 ==========
+  (function () {
+    const latest = issues[0]; // 已按 id 降序排列
+
+    // 1. Topbar "本期" 链接 → 最新期数文件
+    const topbarLink = document.getElementById("topbar-latest");
+    if (topbarLink) topbarLink.href = latest.file;
+
+    // 2. 侧边栏副标题 → 最新期数
+    const sidebarSub = document.getElementById("sidebar-subtitle");
+    if (sidebarSub) sidebarSub.textContent = latest.num + " · " + latest.week;
+
+    // 3. Hero 区 → 最新期数元数据
+    const heroSub = document.getElementById("hero-sub");
+    if (heroSub) heroSub.textContent = latest.subtitle;
+
+    const latestWeek = document.getElementById("latest-week");
+    if (latestWeek) latestWeek.textContent = latest.week;
+
+    const latestDate = document.getElementById("latest-date");
+    if (latestDate) latestDate.textContent = latest.date;
+
+    const issueCount = document.getElementById("issue-count");
+    if (issueCount) issueCount.textContent = issues.length;
+
+    // 4. 往期回顾 → 自动生成卡片（按时间倒序）
+    const archiveGrid = document.getElementById("archive-grid");
+    if (archiveGrid) {
+      archiveGrid.innerHTML = issues
+        .map(
+          (i) => `
+        <a href="${i.file}" class="arc-card">
+          <div class="arc-body">
+            <div class="arc-date">${i.date} · ${i.num} · ${i.week}</div>
+            <h3>${i.title}</h3>
+            <p class="arc-summary">${i.subtitle}</p>
+            <div class="arc-tags">
+              ${i.tags.map((t) => "<span>" + t + "</span>").join("")}
+            </div>
+          </div>
+        </a>`
+        )
+        .join("");
+    }
+  })();
+
   // 深浅色模式切换
   const themeToggle = document.getElementById('themeToggle');
   const themeIcon = document.getElementById('themeIcon');
