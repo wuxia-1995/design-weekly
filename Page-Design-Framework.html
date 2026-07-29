@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0095)file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html -->
-<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>设计周报</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 32 32&#39;%3E%3Cpath d=&#39;M21.5 3H11C6.58 3 3 6.58 3 11v10.5&#39; fill=&#39;none&#39; stroke=&#39;%232F6BFF&#39; stroke-width=&#39;2.4&#39; stroke-linecap=&#39;round&#39;/%3E%3Cpath d=&#39;M10.5 29H21c4.42 0 8-3.58 8-8V10.5&#39; fill=&#39;none&#39; stroke=&#39;%232F6BFF&#39; stroke-width=&#39;2.4&#39; stroke-linecap=&#39;round&#39;/%3E%3Ccircle cx=&#39;16&#39; cy=&#39;16&#39; r=&#39;5.1&#39; fill=&#39;%232F6BFF&#39;/%3E%3Ccircle cx=&#39;27.2&#39; cy=&#39;4.8&#39; r=&#39;3.6&#39; fill=&#39;%23FF6900&#39; stroke=&#39;%23F6F5EF&#39; stroke-width=&#39;2.2&#39;/%3E%3C/svg%3E">
+<title>Design Weekly · 页面框架模板</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M21.5 3H11C6.58 3 3 6.58 3 11v10.5' fill='none' stroke='%232F6BFF' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M10.5 29H21c4.42 0 8-3.58 8-8V10.5' fill='none' stroke='%232F6BFF' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='5.1' fill='%232F6BFF'/%3E%3Ccircle cx='27.2' cy='4.8' r='3.6' fill='%23FF6900' stroke='%23F6F5EF' stroke-width='2.2'/%3E%3C/svg%3E"/>
 <style>
   /* === 设计令牌 === */
   :root {
@@ -1223,18 +1223,18 @@
   }
 </style>
 </head>
-<body class="sidebar-collapsed">
+<body>
 
 <!-- ========== 顶部导航 ========== -->
 <div class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html">
+    <a class="brand" href="index.html">
       <span class="brand-text">Design Weekly</span>
     </a>
     <div class="spacer"></div>
     <nav>
-      <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#hotspot">本期</a>
-      <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#archive">往期回顾</a>
+      <a href="#dashboard">本期</a>
+      <a href="#archive">往期回顾</a>
     </nav>
     <button class="theme-toggle" id="themeToggle" aria-label="切换深浅色模式">
       <span class="theme-toggle-icon" id="themeIcon">🌙</span>
@@ -1244,15 +1244,15 @@
 </div>
 
 <!-- ========== 左侧悬浮目录 ========== -->
-<aside class="sidebar collapsed" id="sidebar">
+<aside class="sidebar" id="sidebar">
   <!-- 顶部标题栏 -->
   <div class="sidebar-header">
     <div class="sidebar-header-left">
       <div class="sidebar-logo">🎨</div>
       <div class="sidebar-title-wrap">
-        <div class="sidebar-title">设计周刊</div>
-        <div class="sidebar-subtitle">第 1 期 · WEEK 31</div>
-      </div>
+          <div class="sidebar-title">设计周刊</div>
+          <div class="sidebar-subtitle">第 N 期 · WEEK XX</div>
+        </div>
     </div>
     <button class="sidebar-more-btn" id="sidebarClose" aria-label="收起目录">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1263,25 +1263,25 @@
 
   <!-- 导航菜单 -->
   <nav class="sidebar-nav">
-    <a class="ss-link" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#dashboard" data-target="dashboard">
+    <a class="ss-link" href="#dashboard" data-target="dashboard">
       <span class="ss-emoji">📊</span><span>资讯看板</span>
     </a>
-    <a class="ss-link active" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#insight" data-target="insight">
+    <a class="ss-link" href="#insight" data-target="insight">
       <span class="ss-emoji">💡</span><span>行业判断</span>
     </a>
-    <a class="ss-link" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#cases" data-target="cases">
+    <a class="ss-link" href="#cases" data-target="cases">
       <span class="ss-emoji">🏆</span><span>行业案例</span>
     </a>
-    <a class="ss-link" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#signals" data-target="signals">
+    <a class="ss-link" href="#signals" data-target="signals">
       <span class="ss-emoji">🛠</span><span>行业工具</span>
     </a>
-    <a class="ss-link" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#prompts" data-target="prompts">
+    <a class="ss-link" href="#prompts" data-target="prompts">
       <span class="ss-emoji">💬</span><span>Prompt 宝库</span>
     </a>
-    <a class="ss-link" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#news" data-target="news">
+    <a class="ss-link" href="#news" data-target="news">
       <span class="ss-emoji">📰</span><span>资讯速览</span>
     </a>
-    <a class="ss-link" href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#actions" data-target="actions">
+    <a class="ss-link" href="#actions" data-target="actions">
       <span class="ss-emoji">✅</span><span>行动建议</span>
     </a>
   </nav>
@@ -1289,7 +1289,7 @@
 
 <!-- 折叠后的悬浮打开按钮 -->
 <button class="sidebar-fab" id="sidebarFab" aria-label="打开目录">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   <span>目录</span>
 </button>
 
@@ -1308,13 +1308,13 @@
       <span>MIB IEDC TEAM · 设计资讯 · 每周五更新</span>
     </div>
     <h1>Design Weekly</h1>
-    <p class="sub" id="hero-sub">鸿蒙斩获红点最高奖，AI 驱动设计成主流</p>
+    <p class="sub" id="hero-sub">副标题，一句话描述本期核心主题</p>
     <div class="meta-row">
-      <span><b id="latest-week">Week 31</b></span>
+      <span><b id="latest-week">Week XX</b></span>
       <span class="sep"></span>
-      <span id="latest-date">2026.07.27</span>
+      <span id="latest-date">2026.XX.XX</span>
       <span class="sep"></span>
-      <span>已发布 <b id="issue-count">1</b> 期</span>
+      <span>第 <b id="issue-count">0XX</b> 期</span>
     </div>
   </div>
 </header>
@@ -1337,47 +1337,41 @@
 
     <div class="dashboard">
       <div style="margin-bottom: 24px;">
-        <h3 style="font-size: 22px; font-weight: 650; letter-spacing: -.02em; margin-bottom: 6px;">鸿蒙斩获红点最高奖，AI 驱动设计成主流</h3>
-        <p style="color: var(--muted); font-size: 14px;">给产品与设计实践者的启发 · 本期 1 款行业工具深度评测 · 8 条核心资讯</p>
+        <h3 style="font-size: 22px; font-weight: 650; letter-spacing: -.02em; margin-bottom: 6px;">本期核心主题标题</h3>
+        <p style="color: var(--muted); font-size: 14px;">给产品与设计实践者的启发 · 本期 X 款行业工具深度评测 · X 条核心资讯</p>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
         <div style="padding: 20px; background: var(--paper); border-radius: 6px; border-left: 3px solid var(--blue-strong);">
-          <h4 style="font-size: 15px; font-weight: 650; margin-bottom: 12px;">🏆 奖项 · 证据</h4>
+          <h4 style="font-size: 15px; font-weight: 650; margin-bottom: 12px;">🏆 分类一</h4>
           <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px; line-height: 1.9;">
-            <li>· HarmonyOS 获红点 Best of the Best</li>
-            <li>· 小艺伴随式 AI UX 获红点奖</li>
-            <li>· 三星 8 项 AI 设计获奖 / 2 项最高奖</li>
-            <li>· 三星家电耗材三大奖项全满贯</li>
-            <li>· 三星 Fluid AI Design System</li>
-            <li>· 三星 Dremo &amp; Minimo 儿童机器人</li>
+            <li>· 要点内容一</li>
+            <li>· 要点内容二</li>
+            <li>· 要点内容三</li>
           </ul>
         </div>
         <div style="padding: 20px; background: var(--paper); border-radius: 6px; border-left: 3px solid var(--orange);">
-          <h4 style="font-size: 15px; font-weight: 650; margin-bottom: 12px;">🧠 洞察 · 趋势</h4>
+          <h4 style="font-size: 15px; font-weight: 650; margin-bottom: 12px;">🧠 分类二</h4>
           <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px; line-height: 1.9;">
-            <li>· 实现变廉价，品味与策展成稀缺能力</li>
-            <li>· 产品价值由模型当前能力决定</li>
-            <li>· AI 工具从问答走向"能做事"的智能体</li>
-            <li>· Codex 与 ChatGPT 合并为统一入口</li>
-            <li>· 跨端一致性设计语言成红点核心</li>
-            <li>· 三星 Fluid AI 系统重塑界面生成</li>
+            <li>· 要点内容一</li>
+            <li>· 要点内容二</li>
+            <li>· 要点内容三</li>
           </ul>
         </div>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
         <div style="padding: 16px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line-soft);">
-          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">体验腾讯 WorkBuddy</h5>
-          <p style="font-size: 12px; color: var(--muted); margin: 0;">从周报/文件/纪要三场景切入</p>
+          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">要点一标题</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">要点说明描述</p>
         </div>
         <div style="padding: 16px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line-soft);">
-          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">设计品味提升机制</h5>
-          <p style="font-size: 12px; color: var(--muted); margin: 0;">每周 15 分钟案例分享会</p>
+          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">要点二标题</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">要点说明描述</p>
         </div>
         <div style="padding: 16px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line-soft);">
-          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">梳理 AI 工具时间轴</h5>
-          <p style="font-size: 12px; color: var(--muted); margin: 0;">按模型能力规划功能上线</p>
+          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">要点三标题</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">要点说明描述</p>
         </div>
       </div>
     </div>
@@ -1389,144 +1383,34 @@
   <div class="wrap-narrow">
     <div class="section-label">
       <span class="section-emoji">💡</span>
-      <h2>行业判断 · OpenAI 合并 Codex 与 ChatGPT</h2>
+      <h2>行业判断 · 章节标题</h2>
       <span class="section-num">第二部分</span>
     </div>
 
     <blockquote>
-      <strong>Why OpenAI is merging Codex and ChatGPT and the future of knowledge work</strong><br>
-      嘉宾：Andrew Ambrosino（OpenAI Codex 桌面应用团队负责人）<br>
-      🔗 <a class="link" href="https://www.youtube.com/watch?v=P3KDebPTUrw" target="_blank">观看视频 →</a>
+      <strong>引用标题</strong><br>
+      引用内容描述<br>
+      🔗 <a class="link" href="#" target="_blank">阅读原文 →</a>
     </blockquote>
 
-    <div class="video-card">
-      <div class="video-embed">
-        <iframe src="./design weekly A_files/P3KDebPTUrw.html" title="Why OpenAI is merging Codex and ChatGPT" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-      </div>
-    </div>
-
-    <h4>📌 视频核心背景</h4>
-    <p>2026 年 7 月 9 日，OpenAI 做了三件震动行业的事：</p>
-    <ol>
-      <li>发布 GPT-5.6 三款模型（Sol/Terra/Luna）</li>
-      <li>把 <strong>Codex 合并进 ChatGPT 桌面端</strong></li>
-      <li>推出 ChatGPT Work 智能体模式</li>
-    </ol>
-    <p><strong>关键数据</strong>：</p>
-    <ul>
-      <li>Codex 周活跃用户超 <strong>500 万</strong>，自 2 月桌面应用发布以来增长超 6 倍</li>
-      <li>知识工作者（非开发者）占用户约 <strong>20%</strong>，增速是开发者的 <strong>3 倍以上</strong></li>
-      <li>ChatGPT Work 发布仅 <strong>17 天</strong>，活跃用户数就超越了 Codex</li>
-      <li>两者合并周活用户达 <strong>1000 万</strong>（7月21日数据）</li>
-    </ul>
-
     <div class="insight">
-      <div class="insight-num">💡 核心观点一：实现变便宜了，什么变贵了？</div>
-      <blockquote>"以前实现功能很贵，所以要花很多时间做事前规划。现在一个功能有 90 个团队同时探索 90 种实现方式——<strong>实现不再昂贵，品味才是。</strong>"<br>—— Andrew Ambrosino</blockquote>
-      <p><strong>Andrew 对「品味」的四层定义</strong>：</p>
-      <ol>
-        <li><strong>美学层面</strong>：视觉呈现好不好看</li>
-        <li><strong>系统思维</strong>：是否融入整个系统，是否自洽</li>
-        <li><strong>方向感</strong>：知道我们在做什么、要去哪里</li>
-        <li><strong>细节把控</strong>：交互动画、语义呈现等细节是否到位</li>
-      </ol>
-    </div>
-
-    <div class="insight">
-      <div class="insight-num">💡 核心观点二：为什么 AI 至今还做不好设计？</div>
-      <p>Codex 写代码能力惊人，但生成设计质量平庸。Andrew 给出了三层原因：</p>
-      <table class="md-table">
-        <tbody><tr><th>层面</th><th>具体原因</th></tr>
-        <tr><td><strong>实际层面</strong></td><td>设计比软件难评分——人类品味本身就是反馈机制的一部分，难以用客观标准衡量</td></tr>
-        <tr><td><strong>研究投入层面</strong></td><td>实验室更愿意投入能加速 AI 研究本身的能力，设计能力对研究加速作用不直接</td></tr>
-        <tr><td><strong>深层矛盾</strong></td><td>① 设计有文化属性，好设计由文化决定<br>② 设计需要新颖性，与软件工程"跟随已知模式"相反<br>③ 最根本：<strong>抽象层理解</strong>——AI 难以理解视觉元素背后的深层结构关系</td></tr>
-      </tbody></table>
-      <blockquote>最难的是抽象层问题。当代码驱动视觉设计时，模型需要理解元素背后的深层结构关系——这对目前的 AI 来说还遥不可及。</blockquote>
-    </div>
-
-    <div class="insight">
-      <div class="insight-num">💡 核心观点三：产品成功与模型能力的精准匹配</div>
-      <p><strong>一个惊人的发现</strong>：</p>
-      <blockquote>Andrew 确信，如果 Codex 应用在去年 11 月推出，一定会在市场上失败；而 2 月推出就大获成功。唯一的变量是中间这几个月<strong>模型能力的进步</strong>。</blockquote>
-      <p><strong>AI 时代产品规划范式转变</strong>：</p>
+      <div class="insight-num">观点一</div>
+      <h4>观点标题</h4>
+      <p>正文内容段落，阐述核心观点和分析。</p>
       <ul>
-        <li>❌ 传统方式：制定全年 roadmap，按计划推进</li>
-        <li>✅ 新方式：根据模型能力时间点，列出感兴趣的方向，持续做原型，决定何时上线</li>
+        <li>要点一：说明描述</li>
+        <li>要点二：说明描述</li>
+        <li>要点三：说明描述</li>
       </ul>
     </div>
 
     <div class="insight">
-      <div class="insight-num">💡 核心观点四：Codex 和 ChatGPT 为什么必须合并？</div>
-      <p><strong>产品定位的演变</strong>：</p>
-      <ol>
-        <li><strong>最初</strong>：Codex 是命令行工具，定位「开发者工具」</li>
-        <li><strong>内部测试发现</strong>：不仅工程和研究团队在用，市场、公关等部门也在用（尽管界面不友好）</li>
-        <li><strong>尝试</strong>：把 Codex 能力搬到其他产品界面，但用户还是偏好 Codex App</li>
-        <li><strong>顿悟</strong>：开发者工具和通用知识工具的边界正在坍塌</li>
-      </ol>
-      <p><strong>合并的本质</strong>：</p>
-      <blockquote>Codex 和 ChatGPT 更像是<strong>同一能力的不同入口</strong>，应该做成通用、可扩展的底层，承接各种深度场景。</blockquote>
-      <p><strong>「Home Base」（大本营）概念</strong>：Andrew 提出 Codex 应该成为用户的「工作大本营」：</p>
+      <div class="insight-num">观点二</div>
+      <h4>观点标题</h4>
+      <p>正文内容段落，阐述核心观点和分析。</p>
       <ul>
-        <li>追踪待办事项</li>
-        <li>部分事情在 App 内完成</li>
-        <li>复杂任务调用其他专业应用</li>
-      </ul>
-      <blockquote><strong>真实案例</strong>：Codex 团队的摄影师用 Codex 剪辑视频——通过编辑 Premiere Pro 工程文件完成剪辑操作，还自己写了扩展插件。</blockquote>
-    </div>
-
-    <div class="insight">
-      <div class="insight-num">🔧 前沿探索：AI 辅助开发的下一站</div>
-      <p><strong>关注点转移</strong>：从「多少代码是 AI 写的」→「代码是<strong>有监督</strong>还是<strong>无监督</strong>写出的」</p>
-      <p><strong>已探索的方向</strong>：</p>
-      <ul>
-        <li>✅ 自主开发软件（autonomous software engineering）</li>
-        <li>✅ Harness Engineering——让模型在夜里清理代码库</li>
-      </ul>
-      <p><strong>当前瓶颈</strong>：</p>
-      <ul>
-        <li>模型通病是倾向于<strong>让代码变复杂</strong></li>
-        <li>团队正努力提升模型「<strong>删代码</strong>」的能力</li>
-        <li>更难的问题：判断功能取舍、搭建抽象结构</li>
-      </ul>
-      <blockquote>现在还做不到设一个 loop 让模型自动改进产品，但团队正在朝这个方向努力。</blockquote>
-    </div>
-
-    <h4>🎯 对设计团队的启示</h4>
-
-    <div class="insight">
-      <div class="insight-num">1. 设计价值的重新定位</div>
-      <ul>
-        <li>当"实现"变得廉价，<strong>判断什么值得做</strong>的能力最值钱</li>
-        <li>设计师的核心竞争力从"执行"转向"品味"和"策展"</li>
-        <li>系统思维、方向感比纯视觉能力更重要</li>
-      </ul>
-    </div>
-
-    <div class="insight">
-      <div class="insight-num">2. AI 设计工具的理性预期</div>
-      <ul>
-        <li>不要期待 AI 短期内能做"好设计"</li>
-        <li>AI 更擅长：生成变体、执行已知模式、处理重复性工作</li>
-        <li>设计师要做的：定义约束、把控方向、做最终判断</li>
-      </ul>
-    </div>
-
-    <div class="insight">
-      <div class="insight-num">3. 产品设计与模型能力对齐</div>
-      <ul>
-        <li>设计方案要考虑"当前模型能做到什么程度"</li>
-        <li>建立"模型能力时间轴"，根据模型进步规划功能上线节奏</li>
-        <li>不再追求"完美设计"，而是"当前模型能力下最好的体验"</li>
-      </ul>
-    </div>
-
-    <div class="insight">
-      <div class="insight-num">4. 拥抱角色融合</div>
-      <ul>
-        <li>学习基础的技术知识，能和工程师同频对话</li>
-        <li>但不要丢掉设计专业的深度积累</li>
-        <li>成为"懂技术的设计师"，而非"会设计的工程师"</li>
+        <li>要点一：说明描述</li>
+        <li>要点二：说明描述</li>
       </ul>
     </div>
   </div>
@@ -1537,277 +1421,33 @@
   <div class="wrap-narrow">
     <div class="section-label">
       <span class="section-emoji">🏆</span>
-      <h2>行业案例 · 德国红点奖 AI 设计专题</h2>
+      <h2>行业案例 · 章节标题</h2>
       <span class="section-num">第三部分</span>
     </div>
 
-    <!-- 红点奖总览 -->
-    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin-bottom: 28px;">
-      <h4 style="margin-top: 0;">🏆 红点设计奖简介</h4>
-      <p>红点设计奖（Red Dot Design Award）由德国设计中心于 1955 年创立，是全球设计界最具影响力的奖项之一，与德国 iF 设计奖、美国 IDEA 设计奖并称<strong>世界三大设计奖项</strong>。</p>
-      <p>每年吸引来自全球 60 多个国家的近万件作品参赛，<strong>"Best of the Best"</strong>是红点奖的最高荣誉，仅有约 1% 的参赛作品能获此殊荣。</p>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0;">
-        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
-          <div style="font-size: 28px; font-weight: 700; color: var(--blue-strong);">61</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">参赛国家/地区</div>
-        </div>
-        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
-          <div style="font-size: 28px; font-weight: 700; color: var(--blue-strong);">6+</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">AI 相关获奖项目</div>
-        </div>
-        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
-          <div style="font-size: 28px; font-weight: 700; color: var(--blue-strong);">3</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Best of the Best</div>
-        </div>
-      </div>
-      <h5 style="margin: 20px 0 10px;">🔗 历届红点奖获奖名单</h5>
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px;">
-        <a href="https://www.red-dot.org/search?solr%5Bfilter%5D%5B%5D=meta_categories%3A%2F11%2F&amp;solr%5Bfilter%5D%5B%5D=year%3A2026" target="_blank" style="display: block; background: var(--paper); padding: 12px; border-radius: 8px; text-align: center; text-decoration: none; color: inherit; border: 2px solid var(--blue-strong);">
-          <div style="font-size: 16px; font-weight: 700; color: var(--blue-strong);">2026</div>
-          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">最新 · 产品设计奖</div>
-        </a>
-        <a href="https://www.red-dot.org/search?solr%5Bfilter%5D%5B%5D=meta_categories%3A%2F11%2F&amp;solr%5Bfilter%5D%5B%5D=year%3A2025" target="_blank" style="display: block; background: var(--paper); padding: 12px; border-radius: 8px; text-align: center; text-decoration: none; color: inherit; border: 1px solid var(--line-soft);">
-          <div style="font-size: 16px; font-weight: 700;">2025</div>
-          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">产品设计奖</div>
-        </a>
-        <a href="https://www.red-dot.org/search?solr%5Bfilter%5D%5B%5D=meta_categories%3A%2F11%2F&amp;solr%5Bfilter%5D%5B%5D=year%3A2024" target="_blank" style="display: block; background: var(--paper); padding: 12px; border-radius: 8px; text-align: center; text-decoration: none; color: inherit; border: 1px solid var(--line-soft);">
-          <div style="font-size: 16px; font-weight: 700;">2024</div>
-          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">产品设计奖</div>
-        </a>
-        <a href="https://www.red-dot.org/zh/magazine/red-dot-award-design-concept-2023-results-zh" target="_blank" style="display: block; background: var(--paper); padding: 12px; border-radius: 8px; text-align: center; text-decoration: none; color: inherit; border: 1px solid var(--line-soft);">
-          <div style="font-size: 16px; font-weight: 700;">2023</div>
-          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">设计概念奖</div>
-        </a>
-      </div>
-      <p style="margin-top: 14px; font-size: 14px;">
-        🌐 <a class="link" href="https://www.red-dot.org/" target="_blank">红点设计奖官方网站</a> ｜ <a class="link" href="https://www.red-dot.org/zh" target="_blank">中文版</a>
-      </p>
-    </div>
-
-    <!-- AI 设计趋势数据 -->
-    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin-bottom: 28px;">
-      <h4 style="margin-top: 0;">📈 红点奖 AI 设计趋势数据</h4>
-      <p style="font-size: 14px; color: var(--muted); margin-bottom: 4px;">近四年 AI 相关获奖项目增长趋势</p>
-      <div class="trend-viz">
-        <div class="trend-item">
-          <div class="trend-num">6+</div>
-          <div class="trend-label">2026年<br>AI 相关获奖</div>
-          <div class="trend-bar"><div class="trend-bar-fill" style="width: 100%;"></div></div>
-        </div>
-        <div class="trend-item">
-          <div class="trend-num">3</div>
-          <div class="trend-label">2025年<br>AI 相关获奖</div>
-          <div class="trend-bar"><div class="trend-bar-fill" style="width: 55%;"></div></div>
-        </div>
-        <div class="trend-item">
-          <div class="trend-num">2</div>
-          <div class="trend-label">2024年<br>AI 相关获奖</div>
-          <div class="trend-bar"><div class="trend-bar-fill" style="width: 35%;"></div></div>
-        </div>
-        <div class="trend-item">
-          <div class="trend-num">1</div>
-          <div class="trend-label">2023年<br>AI 相关获奖</div>
-          <div class="trend-bar"><div class="trend-bar-fill" style="width: 15%;"></div></div>
-        </div>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px;">
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px; text-align: center;">
-          <div style="font-size: 24px; font-weight: 800; color: var(--orange-text);">200%+</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">年增长率</div>
-        </div>
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px; text-align: center;">
-          <div style="font-size: 24px; font-weight: 800; color: var(--blue-strong);">50%</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Best of the Best<br>含 AI 元素</div>
-        </div>
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px; text-align: center;">
-          <div style="font-size: 24px; font-weight: 800; background: linear-gradient(135deg, var(--blue-strong), var(--orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">第1名</div>
-          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">AI 设计<br>获奖数中国</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 案例一：华为鸿蒙（合并获奖介绍 + 案例拆解） -->
     <div class="case-study">
-      <h4>案例一：HarmonyOS Design 荣获 2026 红点 Best of the Best</h4>
-      <img class="case-img" src="./design weekly A_files/photo-1558655146-9f40138edfeb" alt="HarmonyOS Design 红点奖">
-      <p><strong>来源</strong>：华为终端 ｜ <strong>时间</strong>：2026年7月22日 ｜ <strong>类别</strong>：全场景 UX 设计</p>
-      <p>7月22日，HarmonyOS 官方宣布，HarmonyOS 全场景 UX 设计荣获 <strong>2026 年 Red Dot: Best of the Best</strong> 设计大奖，小艺伴随式 AI UX 设计也同步斩获红点设计奖。这是 HarmonyOS Design 继 2022 年获得红点品牌与传达设计奖后，<strong>首次拿下红点最高荣誉</strong>。</p>
-      <p><strong>关键数据</strong>：搭载 HarmonyOS 6 的终端设备突破 <strong>7000 万台</strong>；鸿蒙注册开发者超 <strong>1100 万</strong>；应用和服务数量超 <strong>40 万</strong>。</p>
-      <p>🔗 <a class="link" href="https://www.huawei.com/cn/" target="_blank">了解更多 →</a></p>
+      <h4>案例一：案例名称</h4>
+      <img class="case-img" src="" alt="案例图片" onerror="this.style.display='none'">
+      <p><strong>来源</strong>：来源 ｜ <strong>时间</strong>：时间 ｜ <strong>类别</strong>：类别</p>
+      <p>案例简介一句话描述</p>
 
-      <h5 style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line-soft);">🔍 案例拆解：HarmonyOS 全场景 UX 设计</h5>
-      <blockquote><strong>分析框架</strong>：看到的细节 → 带来的体验 → 可迁移的方法</blockquote>
-      <img class="case-img" src="./design weekly A_files/photo-1512941937669-90a1b58e7e9c" alt="HarmonyOS 全场景">
-
-      <h4 style="margin-top: 20px;">🎯 细节一：全场景一致性设计语言</h4>
-      <p><strong>看到的细节</strong>：从手机、平板、车机到智慧屏，HarmonyOS 采用统一的设计语言——圆角矩形卡片、鸿蒙黑体、渐变色彩体系，跨设备视觉元素保持高度一致。原子化服务卡片可在不同设备间无缝流转，布局自动适配屏幕尺寸。</p>
-      <p><strong>带来的体验</strong>：用户在任意设备上操作都有熟悉的交互感，学习成本趋近于零。服务卡片的跨端流转让用户可以在合适的设备上继续未完成的任务，体验连贯不中断。</p>
-      <p><strong>可迁移的方法</strong>：在设计跨端产品时，先定义核心设计原子（色板、字体、组件形态），再针对各端特性做适配层设计，而非为每端独立设计。建立"一次设计、多端适配"的组件库规范。</p>
-
-      <h4>🎯 细节二：小艺伴随式 AI UX</h4>
-      <p><strong>看到的细节</strong>：小艺 AI 助手以悬浮球/侧边栏形式常驻系统，可在任意应用界面唤起。AI 能理解当前屏幕内容，提供摘要、翻译、搜索等上下文相关操作。对话界面采用流式输出，支持多轮连续交互。</p>
-      <p><strong>带来的体验</strong>：用户无需切换应用即可获得 AI 辅助，操作路径大幅缩短。AI 的"在场感"让用户形成随时可问的使用习惯，从"人找服务"变为"服务找人"。</p>
-      <p><strong>可迁移的方法</strong>：在产品中设计 AI 入口时，优先考虑"场景伴随"模式而非独立 App 形态。让 AI 能够读取当前页面上下文，提供与用户任务相关的智能建议，而不是通用问答。</p>
-
-      <h4>🎯 细节三：空间美学与精致动效</h4>
-      <p><strong>看到的细节</strong>：系统图标采用半透明玻璃态效果，光影层次丰富。页面切换使用非线性动效曲线，元素入场有自然的缓入缓出。通知卡片从顶部以抛物线轨迹滑落，带有轻微弹性。深色模式下色彩对比度经过精细校准。</p>
-      <p><strong>带来的体验</strong>：整体视觉感受精致且高级，动效流畅不突兀。用户在日常使用中能感受到细节品质，形成"精致易用"的品牌感知。深色模式下长时间使用眼睛不易疲劳。</p>
-      <p><strong>可迁移的方法</strong>：建立动效设计规范，统一使用贝塞尔曲线和时长标准。对关键交互（如通知、弹窗、页面切换）设计专门的动效曲线，用物理感模拟提升真实度。深色模式不能只是简单反色，需重新校准色彩层级。</p>
-    </div>
-
-    <!-- 案例二：三星 -->
-    <div class="case-study">
-      <h4>案例二：三星斩获红点设计大奖 2026 双项最高奖，AI 驱动设计成焦点</h4>
-      <img class="case-img" src="./design weekly A_files/photo-1677442136019-21780ecad995" alt="三星 AI 设计">
-      <p><strong>来源</strong>：三星电子 ｜ <strong>时间</strong>：2026年7月14日</p>
-      <p>7月14日，三星电子在红点设计大奖 2026 设计概念类别中摘得 <strong>两项 Best of the Best 最高奖</strong>，总计揽获 8 项大奖。获奖作品<strong>全部深度整合 AI 技术</strong>，聚焦用户真实使用场景与个性化需求，致力于打造更自然、更直觉、更具温度的人机交互体验。</p>
-
-      <h5>🏅 双项最高奖作品</h5>
+      <h5>核心设计亮点</h5>
       <ol>
-        <li><strong>家电耗材前瞻性概念设计</strong>
+        <li><strong>亮点一标题</strong>
           <ul>
-            <li>创新采用色彩识别系统：半永久性组件（灰色）、可循环再生部件（绿色）、常规废弃物（棕色）</li>
-            <li>实现"零说明式"环保操作</li>
-            <li>已集齐 iF 设计奖 2026 金奖 + IDEA 设计奖 2024 金奖 + 红点 Best of the Best，达成<strong>世界三大设计奖项最高荣誉全满贯</strong></li>
+            <li>详细说明</li>
+            <li>详细说明</li>
           </ul>
         </li>
-        <li><strong>儿童 AI 互动机器人 Dremo &amp; Minimo</strong>
+        <li><strong>亮点二标题</strong>
           <ul>
-            <li>家庭中枢主机 Dremo + 随身便携终端 Minimo 协同构成</li>
-            <li>家长可自定义 AI 角色的名称、性格特质与语音风格</li>
-            <li>依托持续学习能力，动态适配儿童兴趣变化与认知发展阶段</li>
+            <li>详细说明</li>
+            <li>详细说明</li>
           </ul>
         </li>
       </ol>
-
-      <h5>🎁 六项 AI 赋能设计（本奖）</h5>
-      <ul>
-        <li><strong>AI Beauty Mirror</strong>：高精度面部扫描，实时评估肌肤状态，智能生成专属护肤路径</li>
-        <li><strong>Panorama UX</strong>：依据用户行为习惯、环境状态及当前任务，自主重构界面布局与交互逻辑</li>
-        <li><strong>AI Kitchen</strong>：融合 AI 算法与机械臂技术，覆盖食谱推荐到自动清洁全流程</li>
-        <li><strong>Spatial Tab</strong>：裸眼 3D 显示技术构建沉浸式对话空间，支持自然眼神交流</li>
-        <li><strong>AI Home Companion PUCO</strong>：具备环境感知与情绪识别能力的家庭 AI 助手</li>
-        <li><strong>Fluid AI Design System</strong>：依托 AI 代理与生成式 UI 引擎，实时生成契合用户偏好的动态界面</li>
-      </ul>
-      <blockquote>三星电子 DX 部门首席设计官 Mauro Porcini："技术越前沿，就越需要回归本质——对人类行为、情感与价值观的深刻共情。"</blockquote>
-      <p>🔗 <a class="link" href="https://news.samsung.com/global/" target="_blank">了解更多 →</a></p>
-    </div>
-
-    <!-- 华为 vs 三星对比 -->
-    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin: 28px 0;">
-      <h4 style="margin-top: 0;">⚖️ 深度对比：华为鸿蒙 vs 三星 AI 设计策略</h4>
-      <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">两大科技巨头的 AI 设计路径对比，洞察东西方设计哲学差异</p>
-      
-      <table class="compare-table">
-        <tbody><tr>
-          <th>对比维度</th>
-          <th>华为 HarmonyOS</th>
-          <th>三星 AI 设计</th>
-        </tr>
-        <tr>
-          <td colspan="3" class="dim-label">🎯 战略定位</td>
-        </tr>
-        <tr>
-          <td>核心理念</td>
-          <td>全场景一致体验，AI 伴随式融入</td>
-          <td>AI 深度赋能单品，个性化定制</td>
-        </tr>
-        <tr>
-          <td>设计哲学</td>
-          <td>「万物归一」——统一设计语言</td>
-          <td>「千人千面」——动态适配用户</td>
-        </tr>
-        <tr>
-          <td>AI 角色</td>
-          <td>系统级助手，润物细无声</td>
-          <td>功能级赋能，显性化呈现</td>
-        </tr>
-        <tr>
-          <td colspan="3" class="dim-label">💡 技术路径</td>
-        </tr>
-        <tr>
-          <td>技术架构</td>
-          <td>分布式软总线 + 原子化服务</td>
-          <td>生成式 UI 引擎 + 设备端 AI</td>
-        </tr>
-        <tr>
-          <td>交互方式</td>
-          <td>小艺悬浮球/侧边栏，全局可达</td>
-          <td>场景化入口，各应用独立整合</td>
-        </tr>
-        <tr>
-          <td>个性化程度</td>
-          <td>中等——系统级统一适配</td>
-          <td>高——Fluid AI 实时生成界面</td>
-        </tr>
-        <tr>
-          <td colspan="3" class="dim-label">🏆 获奖表现</td>
-        </tr>
-        <tr>
-          <td>Best of the Best</td>
-          <td>1 项（全场景 UX 设计）</td>
-          <td>2 项（家电耗材 + 儿童机器人）</td>
-        </tr>
-        <tr>
-          <td>获奖数量</td>
-          <td>2 项（含小艺 AI UX）</td>
-          <td>8 项（全面开花）</td>
-        </tr>
-        <tr>
-          <td>获奖类型</td>
-          <td>品牌&amp;传达设计 + 产品设计</td>
-          <td>设计概念类为主</td>
-        </tr>
-        <tr>
-          <td colspan="3" class="dim-label">📝 设计启示</td>
-        </tr>
-        <tr>
-          <td>可借鉴点</td>
-          <td>跨端一致性、系统级 AI 入口设计</td>
-          <td>生成式 UI、单品深度 AI 赋能</td>
-        </tr>
-        <tr>
-          <td>适用场景</td>
-          <td>多设备生态产品</td>
-          <td>单品功能强化型产品</td>
-        </tr>
-      </tbody></table>
-      
-      <div style="margin-top: 20px; padding: 16px; background: var(--paper); border-radius: 10px; border-left: 4px solid var(--blue-strong);">
-        <strong style="color: var(--blue-strong);">💡 编辑观点</strong>
-        <p style="margin: 8px 0 0; font-size: 14px; color: var(--muted); line-height: 1.7;">
-          华为走的是「自上而下」的系统级路线——先定义统一设计语言，再让 AI 融入系统各处；
-          三星走的是「自下而上」的单品级路线——让每个产品都有自己的 AI 特色，再逐步形成体系。
-          两条路径各有优劣，<strong>对于设计团队的启示是：既要建立系统级的 AI 设计规范，也要鼓励单品级的 AI 创新探索</strong>。
-        </p>
-      </div>
-    </div>
-
-    <!-- 其他 AI 相关红点获奖作品 -->
-    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin-top: 28px;">
-      <h4 style="margin-top: 0;">📌 其他 AI 相关红点获奖作品</h4>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
-        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
-          <strong>🎧 HTC VIVE Eagle AI 眼镜</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">轻量化 AI 智能眼镜，产品+包装双获奖。49 克全天候佩戴，支持语音与影像免手持操作，隐私优先设计。</span><br>
-          <a class="link" href="https://cloud.tencent.com.cn/developer/news/3900689" target="_blank" style="font-size: 12px;">查看详情 →</a>
-        </div>
-        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
-          <strong>🤖 成者 AI 会议机器人</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">CZUR StarryHub AI 会议机器人，极简设计理念，6 麦克风阵列 + 双 4K 摄像头，AI 实时字幕与会议纪要。</span><br>
-          <a class="link" href="http://finance.sina.cn/tech/2026-04-08/detail-inhtuyvy1494832.d.html" target="_blank" style="font-size: 12px;">查看详情 →</a>
-        </div>
-        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
-          <strong>🎸 TemPolor Melo-D AI 吉他</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">生成式 AI 智能吉他，广州欢城文化传媒出品，红点产品设计奖获奖作品。</span><br>
-          <a class="link" href="http://m.toutiao.com/group/7660798878207476265/" target="_blank" style="font-size: 12px;">查看详情 →</a>
-        </div>
-        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
-          <strong>🪑 焕星 AI 智能单椅</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">"智栖·云骥" AI 智能单椅，红点设计概念奖。仿生环抱·柔性无感·AI 自适应，一月内连获法美中三大奖。</span><br>
-          <a class="link" href="https://m.chinaz.com/tags/1057595.shtml" target="_blank" style="font-size: 12px;">查看详情 →</a>
-        </div>
-      </div>
+      <blockquote>评审评语或设计启示</blockquote>
+      <p>🔗 <a class="link" href="#" target="_blank">了解更多 →</a></p>
     </div>
   </div>
 </section>
@@ -1817,97 +1457,54 @@
   <div class="wrap-narrow">
     <div class="section-label">
       <span class="section-emoji">🛠️</span>
-      <h2>行业工具 · 腾讯桌面 AI 智能体 WorkBuddy</h2>
+      <h2>行业工具 · 章节标题</h2>
       <span class="section-num">第四部分</span>
     </div>
 
     <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 28px; border-radius: 14px;">
-      <h3 style="margin-top: 0;">腾讯 WorkBuddy · 桌面 AI 智能体工作台</h3>
-      <p style="font-size: 15px; color: var(--muted); margin-bottom: 16px;"><strong style="color: var(--ink);">全场景职场 AI 智能体</strong>，能自主规划任务、操作本地文件、交付可验收结果的"智能同事"</p>
+      <h3 style="margin-top: 0;">工具名称 · 一句话定位</h3>
+      <p style="font-size: 15px; color: var(--muted); margin-bottom: 16px;"><strong style="color: var(--ink);">核心定位描述</strong>，详细功能说明</p>
       <p style="font-size: 14px; margin-bottom: 16px;">
-        🔗 <a class="link" href="https://www.workbuddy.ai/" target="_blank">官方网站</a> ｜
-        <a class="link" href="https://cloud.tencent.com/developer/article/2713618" target="_blank">5 分钟入门指南</a> ｜
-        <a class="link" href="https://cloud.tencent.com/developer/article/2703054" target="_blank">小白使用心得</a> ｜
-        <a class="link" href="http://finance.sina.cn/2026-07-27/detail-inikfnph9875647.d.html" target="_blank">鸿蒙 PC 版上线</a>
+        🔗 <a class="link" href="#" target="_blank">官方网站</a> ｜
+        <a class="link" href="#" target="_blank">相关链接二</a>
       </p>
 
-      <h4 style="margin-top: 24px;">三大核心能力</h4>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0;">
-        <div style="background: var(--paper); padding: 18px; border-radius: 10px; text-align: center;">
-          <div style="font-size: 28px;">📝</div>
-          <h5 style="margin: 8px 0 4px;">文件操作</h5>
-          <p style="font-size: 13px; color: var(--muted); margin: 0;">读写本地文件，批量处理</p>
+      <h4 style="margin-top: 24px;">🌟 核心能力</h4>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0;">
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">📝</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">能力一</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">能力说明</p>
         </div>
-        <div style="background: var(--paper); padding: 18px; border-radius: 10px; text-align: center;">
-          <div style="font-size: 28px;">🧠</div>
-          <h5 style="margin: 8px 0 4px;">自主规划</h5>
-          <p style="font-size: 13px; color: var(--muted); margin: 0;">拆解任务，多步骤执行</p>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">🧠</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">能力二</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">能力说明</p>
         </div>
-        <div style="background: var(--paper); padding: 18px; border-radius: 10px; text-align: center;">
-          <div style="font-size: 28px;">🔄</div>
-          <h5 style="margin: 8px 0 4px;">多模型切换</h5>
-          <p style="font-size: 13px; color: var(--muted); margin: 0;">5 大模型按需选择</p>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">🔄</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">能力三</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">能力说明</p>
         </div>
       </div>
-
-      <h4 style="margin-top: 24px;">🔀 三种工作模式</h4>
-      <table class="md-table" style="margin: 12px 0;">
-        <tbody><tr><th>模式</th><th>权限</th><th>适合场景</th><th>新手建议</th></tr>
-        <tr>
-          <td><strong>Ask 问答</strong></td>
-          <td>只读文件、纯问答</td>
-          <td>查资料、问问题、技术调研</td>
-          <td>⭐ 从这个开始</td>
-        </tr>
-        <tr>
-          <td><strong>Plan 规划</strong></td>
-          <td>只读文件、制定计划</td>
-          <td>复杂任务先出方案、高风险操作</td>
-          <td>重要文件用这个</td>
-        </tr>
-        <tr>
-          <td><strong>Craft 实干</strong></td>
-          <td>读写文件、执行任务</td>
-          <td>写代码、处理文件、做报表</td>
-          <td>熟悉后再使用</td>
-        </tr>
-      </tbody></table>
 
       <h4 style="margin-top: 24px;">💼 设计师高频使用场景</h4>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0;">
         <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
-          <strong>📊 设计汇报 PPT</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">根据数据自动生成汇报 PPT 初稿</span>
+          <strong>场景一标题</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">场景说明描述</span>
         </div>
         <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
-          <strong>📝 周报/总结文案</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">工作流水账一键整理成正式周报</span>
-        </div>
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
-          <strong>📁 设计文件整理</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">批量重命名、按项目分类归档</span>
-        </div>
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
-          <strong>🔍 竞品分析调研</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">多源信息检索对比，生成分析报告</span>
-        </div>
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
-          <strong>🎤 会议纪要生成</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">录音转写 + 自动提炼待办与决议</span>
-        </div>
-        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
-          <strong>📱 鸿蒙「碰一碰」</strong><br>
-          <span style="font-size: 13px; color: var(--muted);">跨设备分享 AI 对话上下文</span>
+          <strong>场景二标题</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">场景说明描述</span>
         </div>
       </div>
 
       <blockquote style="margin-top: 24px; background: var(--paper); border-left: 4px solid var(--orange);">
-        <strong>💡 体验建议</strong>：
+        <strong>💡 设计启示</strong>：
         <ul style="margin: 8px 0 0; padding-left: 18px;">
-          <li><strong>下载安装</strong>：访问 workbuddy.ai，支持 Windows / macOS / 鸿蒙 PC</li>
-          <li><strong>新手福利</strong>：登录后领取 5000 积分新人礼包，每月还送 500 积分</li>
-          <li><strong>安全提示</strong>：先新建专用文件夹授权，熟悉后再放开更多权限</li>
-          <li><strong>省钱技巧</strong>：调研阶段用 Ask 模式，确定动手再切 Craft，省一半积分</li>
+          <li>启示一：说明描述</li>
+          <li>启示二：说明描述</li>
         </ul>
       </blockquote>
     </div>
@@ -1919,101 +1516,34 @@
   <div class="wrap-narrow">
     <div class="section-label">
       <span class="section-emoji">💬</span>
-      <h2>Prompt 宝库 · 设计师实用提示词</h2>
+      <h2>Prompt 宝库 · 章节标题</h2>
       <span class="section-num">Bonus</span>
     </div>
 
     <p style="font-size: 15px; color: var(--muted); margin-bottom: 24px;">
-      精选 3 个设计师高频使用的 AI 提示词，直接复制可用，搭配 WorkBuddy / ChatGPT / Claude 效果更佳。
+      引导说明文字，介绍本部分内容。
     </p>
 
-    <!-- Prompt 1: 设计需求拆解 -->
     <div class="prompt-card">
       <div class="prompt-header">
         <span class="prompt-tag">🔥 热门</span>
-        <span class="prompt-title">设计需求快速拆解</span>
+        <span class="prompt-title">Prompt 标题</span>
       </div>
-      <div class="prompt-content">你是一位资深的 UX 设计师，请帮我拆解以下设计需求：
+      <div class="prompt-content">你是一位资深的专家，请帮我完成以下任务：
 
-【需求描述】
-{在这里粘贴你的需求}
+【输入内容】
+{在这里粘贴你的内容}
 
-请从以下维度进行拆解：
-1. 🎯 核心目标：用户要达成什么？
-2. 👥 用户画像：目标用户是谁？有什么特征？
-3. 🔑 关键场景：用户在什么场景下使用？
-4. 📋 功能清单：必须有哪些功能？哪些是锦上添花？
-5. ⚠️ 约束条件：有什么技术/时间/资源限制？
-6. 💡 设计建议：基于以上分析，给出 3 个设计方向建议
+请从以下维度进行处理：
+1. 维度一：说明
+2. 维度二：说明
+3. 维度三：说明
 
-请用清晰的层级结构输出，语言简洁专业。</div>
+请用清晰的结构输出，语言简洁专业。</div>
       <div class="prompt-tip">
         <strong>适用场景：</strong>
-        <span>接到模糊需求时快速理清思路，对齐产品经理预期</span>
+        <span>描述适用的场景和使用建议</span>
       </div>
-    </div>
-
-    <!-- Prompt 2: 界面文案优化 -->
-    <div class="prompt-card">
-      <div class="prompt-header">
-        <span class="prompt-tag" style="background: linear-gradient(135deg, #10b981, var(--blue-strong));">✨ 实用</span>
-        <span class="prompt-title">界面文案润色优化</span>
-      </div>
-      <div class="prompt-content">你是一位资深的产品文案专家，请帮我优化以下界面文案：
-
-【当前文案】
-{在这里粘贴你要优化的文案}
-
-【使用场景】
-{描述这个文案出现在什么界面、用户处于什么状态}
-
-请从以下角度优化并给出 3 个版本：
-1. 简洁版：最精炼的表达，控制在 12 字以内
-2. 友好版：更有温度，拉近与用户的距离
-3. 专业版：更正式严谨，适合 B 端产品
-
-同时请说明每个版本的适用场景和优缺点。</div>
-      <div class="prompt-tip">
-        <strong>适用场景：</strong>
-        <span>按钮文案、空状态提示、错误提示等界面文案的快速优化</span>
-      </div>
-    </div>
-
-    <!-- Prompt 3: 竞品分析 -->
-    <div class="prompt-card">
-      <div class="prompt-header">
-        <span class="prompt-tag" style="background: linear-gradient(135deg, var(--orange), #f59e0b);">📊 高效</span>
-        <span class="prompt-title">竞品设计分析框架</span>
-      </div>
-      <div class="prompt-content">请帮我对以下产品做设计维度的竞品分析：
-
-【产品名称】
-{竞品产品名}
-
-【分析重点】
-{我们关注的功能/模块}
-
-请从以下维度进行分析：
-1. 🎨 视觉风格：配色、字体、整体调性
-2. 🔄 交互流程：核心任务的操作路径、步数
-3. 🧠 信息架构：导航结构、内容组织方式
-4. 💡 亮点设计：3 个值得借鉴的设计细节
-5. ⚠️ 可改进点：3 个我们可以做得更好的地方
-6. 🎯 对我们的启示：可以直接应用到我们产品中的建议
-
-请用表格形式呈现对比，最后给出总结建议。</div>
-      <div class="prompt-tip">
-        <strong>适用场景：</strong>
-        <span>竞品调研、项目前期分析、寻找设计参考</span>
-      </div>
-    </div>
-
-    <div style="margin-top: 24px; padding: 16px 20px; background: var(--paper-2); border-radius: 12px; border: 1px solid var(--line-soft);">
-      <p style="margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7;">
-        💡 <strong style="color: var(--ink);">使用技巧：</strong>
-        把这些 Prompt 保存到 WorkBuddy 的「常用指令」中，或者做成 TextExpander 快捷短语，需要时一键调用。
-        使用时记得把 <code style="background: var(--paper); padding: 2px 6px; border-radius: 4px; font-size: 12px;">{}</code> 中的内容替换成你自己的需求。
-      </p>
     </div>
   </div>
 </section>
@@ -2023,60 +1553,37 @@
   <div class="wrap-narrow">
     <div class="section-label">
       <span class="section-emoji">📰</span>
-      <h2>资讯速览</h2>
+      <h2>资讯速览 · 章节标题</h2>
       <span class="section-num">第五部分</span>
     </div>
-    <table class="md-table news-table">
-      <tbody><tr><th>#</th><th>资讯</th><th>来源</th><th>链接</th></tr>
-      <tr>
-        <td class="news-num">1</td>
-        <td><strong>OpenAI 发布 GPT-5.6 并合并 Codex 与 ChatGPT，推出 ChatGPT Work 智能体模式</strong></td>
-        <td class="news-source">OpenAI</td>
-        <td><a class="link" href="https://openai.com/zh-Hans-CN/index/codex-for-knowledge-work/" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">2</td>
-        <td><strong>Figma AI 推出组件生成新功能，支持从线框图一键生成高保真设计</strong></td>
-        <td class="news-source">Figma</td>
-        <td><a class="link" href="https://www.figma.com/ai" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">3</td>
-        <td><strong>Material Design 4 发布，AI 个性化界面生成能力全面升级</strong></td>
-        <td class="news-source">Google</td>
-        <td><a class="link" href="https://m3.material.io/" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">4</td>
-        <td><strong>WCAG 3.0 最新工作草案发布，采用铜/银/金三级评分模型</strong></td>
-        <td class="news-source">W3C</td>
-        <td><a class="link" href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">5</td>
-        <td><strong>2026 法国设计奖第一季获奖名单公布，首次增设 UI/UX 类别</strong></td>
-        <td class="news-source">French Design Awards</td>
-        <td><a class="link" href="https://www.muse.world/post/2026-french-design-awards-announces-season-1-winners" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">6</td>
-        <td><strong>Awwwards 2026 年度最佳网页设计评选进行中，交互创新成核心评审维度</strong></td>
-        <td class="news-source">Awwwards</td>
-        <td><a class="link" href="https://www.awwwards.com/websites/" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">7</td>
-        <td><strong>Midjourney V7 发布，界面设计稿生成质量大幅提升</strong></td>
-        <td class="news-source">Midjourney</td>
-        <td><a class="link" href="https://www.midjourney.com/" target="_blank">查看 →</a></td>
-      </tr>
-      <tr>
-        <td class="news-num">8</td>
-        <td><strong>Apple Vision Pro 2 发布，空间 UI 开发工具 Reality Composer 全面更新</strong></td>
-        <td class="news-source">Apple</td>
-        <td><a class="link" href="https://developer.apple.com/visionos/" target="_blank">查看 →</a></td>
-      </tr>
-    </tbody></table>
+
+    <div class="case-study">
+      <table class="md-table news-table">
+        <thead>
+          <tr><th>#</th><th>资讯标题</th><th>来源</th><th>链接</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="news-num">1</td>
+            <td><strong>资讯标题一</strong></td>
+            <td class="news-source">来源</td>
+            <td><a class="link" href="#" target="_blank">查看 →</a></td>
+          </tr>
+          <tr>
+            <td class="news-num">2</td>
+            <td><strong>资讯标题二</strong></td>
+            <td class="news-source">来源</td>
+            <td><a class="link" href="#" target="_blank">查看 →</a></td>
+          </tr>
+          <tr>
+            <td class="news-num">3</td>
+            <td><strong>资讯标题三</strong></td>
+            <td class="news-source">来源</td>
+            <td><a class="link" href="#" target="_blank">查看 →</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
@@ -2090,75 +1597,24 @@
     </div>
 
     <div class="todo-section">
-      <h4>建议一：建立 AI 设计协作工作流</h4>
-      <p class="muted">本周内组织一次 AI 设计工具内部分享，评估 Figma AI、Midjourney 等工具在团队工作流中的落地场景。</p>
+      <h4>建议一：建议标题</h4>
+      <p class="muted">建议详细说明描述。</p>
       <p><strong>落地步骤</strong>：</p>
       <ol class="todo-steps">
-        <li>从「生成组件变体」「自动排版」「文案润色」三个低门槛场景切入</li>
-        <li>制定 1-2 个可量化的效率提升目标</li>
-        <li>建立 AI 工具使用指南和最佳实践库</li>
+        <li>步骤一说明</li>
+        <li>步骤二说明</li>
+        <li>步骤三说明</li>
       </ol>
     </div>
 
     <div class="todo-section">
-      <h4>建议二：梳理跨端设计规范</h4>
-      <p class="muted">参考 HarmonyOS 全场景设计思路，审计当前产品在移动端、平板端、桌面端的设计一致性。</p>
+      <h4>建议二：建议标题</h4>
+      <p class="muted">建议详细说明描述。</p>
       <p><strong>落地步骤</strong>：</p>
       <ol class="todo-steps">
-        <li>提取共通的设计原子（色板、字体、间距、组件形态）</li>
-        <li>补充各端适配规则文档</li>
-        <li>为后续跨端产品迭代做准备</li>
-      </ol>
-    </div>
-
-    <div class="todo-section">
-      <h4>建议三：建立 AI 时代的「设计品味」提升机制</h4>
-      <p class="muted">基于 Andrew Ambrosino 的核心观点——当实现变廉价时，品味和策展能力成为最稀缺的资源。</p>
-      <p><strong>落地步骤</strong>：</p>
-      <ol class="todo-steps">
-        <li>每周组织 15 分钟「设计品味加油站」，分享 1-2 个优秀设计案例并讨论「好在哪里」</li>
-        <li>建立团队设计评审标准，从「能不能做」转向「值不值得做」</li>
-        <li>鼓励设计师培养系统思维和方向感，而非只关注视觉执行</li>
-      </ol>
-    </div>
-
-    <div class="todo-section">
-      <h4>建议四：动效设计专项提升</h4>
-      <p class="muted">建立团队动效设计规范，统一动效曲线和时长标准。</p>
-      <p><strong>推荐标准</strong>：</p>
-      <ul>
-        <li>入场动效：ease-out-quart 曲线</li>
-        <li>出场动效：ease-in-quart 曲线</li>
-        <li>小型动效：150-200ms</li>
-        <li>页面转场：300-400ms</li>
-      </ul>
-      <p><strong>落地步骤</strong>：</p>
-      <ol class="todo-steps">
-        <li>选取 3 个核心交互场景进行动效优化</li>
-        <li>作为全产品的标杆参考</li>
-        <li>纳入设计系统组件库</li>
-      </ol>
-    </div>
-
-    <div class="todo-section">
-      <h4>建议五：安装并体验腾讯 WorkBuddy</h4>
-      <p class="muted">从写周报、整理文件、生成会议纪要三个场景开始，评估桌面 AI 智能体对设计工作流的提效潜力。</p>
-      <p><strong>落地步骤</strong>：</p>
-      <ol class="todo-steps">
-        <li>访问 workbuddy.ai 下载安装，领取新人积分礼包</li>
-        <li>先用 Ask 模式处理信息查询，熟悉后切 Craft 模式</li>
-        <li>记录 3 个高效场景，整理团队共享评测表</li>
-      </ol>
-    </div>
-
-    <div class="todo-section">
-      <h4>建议六：梳理 AI 设计工具能力时间轴</h4>
-      <p class="muted">根据模型能力进步节奏，重新规划产品功能上线优先级，将设计方案与当前模型能力对齐。</p>
-      <p><strong>落地步骤</strong>：</p>
-      <ol class="todo-steps">
-        <li>盘点当前在用的 AI 设计工具，记录各自能力边界</li>
-        <li>建立"模型能力时间轴"，标注关键能力里程碑</li>
-        <li>对齐产品 roadmap，按模型能力时间点规划功能上线</li>
+        <li>步骤一说明</li>
+        <li>步骤二说明</li>
+        <li>步骤三说明</li>
       </ol>
     </div>
   </div>
@@ -2168,26 +1624,24 @@
     <!-- /左侧主内容 -->
 
     <!-- 右侧边栏 -->
-    <aside class="side-col">
-
       <!-- 本期数据速览 -->
       <div class="side-card">
         <h4>📊 本期数据</h4>
         <div class="stats-grid">
           <div class="stat-item">
-            <div class="stat-num">8</div>
+            <div class="stat-num">XX</div>
             <div class="stat-label">资讯速览</div>
           </div>
           <div class="stat-item">
-            <div class="stat-num">6</div>
+            <div class="stat-num">XX</div>
             <div class="stat-label">趋势洞察</div>
           </div>
           <div class="stat-item">
-            <div class="stat-num">2</div>
+            <div class="stat-num">XX</div>
             <div class="stat-label">深度案例</div>
           </div>
           <div class="stat-item">
-            <div class="stat-num">1</div>
+            <div class="stat-num">XX</div>
             <div class="stat-label">工具评测</div>
           </div>
         </div>
@@ -2197,16 +1651,14 @@
       <div class="side-card">
         <h4>🏷️ 热门标签</h4>
         <div class="tag-cloud">
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#cases">红点奖</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#cases">华为鸿蒙</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#cases">三星AI</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#insight">OpenAI</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#insight">Codex</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#signals">WorkBuddy</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#insight">AI设计</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#cases">Best of the Best</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#news">设计工作流</a>
-          <a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#actions">行动建议</a>
+          <a href="#cases">标签一</a>
+          <a href="#insight">标签二</a>
+          <a href="#signals">标签三</a>
+          <a href="#insight">标签四</a>
+          <a href="#cases">标签五</a>
+          <a href="#cases">标签六</a>
+          <a href="#insight">标签七</a>
+          <a href="#signals">标签八</a>
         </div>
       </div>
 
@@ -2214,16 +1666,14 @@
       <div class="side-card" style="background: linear-gradient(135deg, rgba(91, 140, 255, 0.1) 0%, rgba(255, 140, 66, 0.08) 100%); border-color: rgba(91, 140, 255, 0.2);">
         <h4 style="color: var(--blue-strong);">📅 下一期预告</h4>
         <div style="font-size: 13px; line-height: 1.7; color: var(--ink);">
-          <p style="margin-bottom: 8px;"><strong>第 002 期</strong></p>
-          <p style="color: var(--muted); font-size: 12px; margin-bottom: 12px;">2026.08.03 · Week 32</p>
+          <p style="margin-bottom: 8px;"><strong>第 0XX 期</strong></p>
+          <p style="color: var(--muted); font-size: 12px; margin-bottom: 12px;">2026.XX.XX · Week XX</p>
           <p style="font-size: 12px; color: var(--muted); line-height: 1.7;">
-            即将带来 AI 设计工具深度横评、最新行业动态追踪，敬请期待。
+            下期内容预告描述，敬请期待。
           </p>
         </div>
       </div>
-
-    </aside>
-    <!-- /右侧边栏 -->
+        <!-- /右侧边栏 -->
 
   </div>
 </div>
@@ -2241,10 +1691,40 @@
 <section class="archive">
   <div class="wrap">
     <div class="archive-grid">
-      <div class="empty-state">
-        <span class="emoji">📰</span>
-        <p>暂无往期内容，敬请期待后续更新。</p>
-      </div>
+      <a href="#" class="arc-card">
+        <div class="arc-body">
+          <div class="arc-date">2026.XX.XX · 第 0XX 期 · WEEK XX</div>
+          <h3>期数标题一</h3>
+          <p class="arc-summary">期数简介摘要描述</p>
+          <div class="arc-tags">
+            <span>标签一</span>
+            <span>标签二</span>
+            <span>标签三</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="arc-card">
+        <div class="arc-body">
+          <div class="arc-date">2026.XX.XX · 第 0XX 期 · WEEK XX</div>
+          <h3>期数标题二</h3>
+          <p class="arc-summary">期数简介摘要描述</p>
+          <div class="arc-tags">
+            <span>标签一</span>
+            <span>标签二</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="arc-card">
+        <div class="arc-body">
+          <div class="arc-date">2026.XX.XX · 第 0XX 期 · WEEK XX</div>
+          <h3>期数标题三</h3>
+          <p class="arc-summary">期数简介摘要描述</p>
+          <div class="arc-tags">
+            <span>标签一</span>
+            <span>标签二</span>
+          </div>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -2258,14 +1738,14 @@
         <div class="fb-sub">MIB IEDC TEAM · 设计资讯 · 每周五更新</div>
       </div>
     </div>
-    <div class="foot-meta">下期预告：<b>IDEA 奖数字交互类别深度解读 + Figma AI 最新功能实测</b></div>
+    <div class="foot-meta">下期预告：<b>下期主题预告描述</b></div>
   </div>
 </footer>
 
 </div><!-- /.main-content -->
 
 <!-- 回到顶部 -->
-<a href="file:///Users/wuxia/Documents/%E7%94%A8%E7%A0%94%E8%B5%84%E8%AE%AF%E6%95%B4%E5%90%88/index.html#top" class="back-top show" id="backTop">↑</a>
+<a href="#top" class="back-top" id="backTop">↑</a>
 
 <script>
   // 深浅色模式切换
@@ -2359,5 +1839,5 @@
   }, { passive: true });
 </script>
 
-
-</body></html>
+</body>
+</html>
