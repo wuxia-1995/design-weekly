@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Weekly · 第 002 期 · 智能画布与设计新秩序</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M21.5 3H11C6.58 3 3 6.58 3 11v10.5' fill='none' stroke='%232F6BFF' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M10.5 29H21c4.42 0 8-3.58 8-8V10.5' fill='none' stroke='%232F6BFF' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='5.1' fill='%232F6BFF'/%3E%3Ccircle cx='27.2' cy='4.8' r='3.6' fill='%23FF6900' stroke='%23F6F5EF' stroke-width='2.2'/%3E%3C/svg%3E"/>
+<style>
+  /* === 设计令牌 === */
+  :root {
+    --paper: #0a0a0f;
+    --paper-2: #111118;
+    --ink: #e8e8f0;
+    --muted: #8888a0;
+    --line: #ffffff22;
+    --line-soft: #ffffff10;
+    --blue: #5b8cff;
+    --blue-strong: #7ba3ff;
+    --orange: #ff8c42;
+    --orange-text: #ff9d5c;
+    --sans: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+    --mono: "SFMono-Regular","Roboto Mono",ui-monospace,Menlo,monospace;
+    --gutter: clamp(56px, calc(40px + 1.6667vw), 72px);
+    --serif: "New York","Times New Roman",Georgia,serif;
+    --sidebar-w: 248px;
+    --sidebar-collapsed-w: 0px;
+  }
+
+  /* 浅色模式 */
+  body.light-mode {
+    --paper: #fafaf8;
+    --paper-2: #f5f5f2;
+    --ink: #1a1a2e;
+    --muted: #6b7280;
+    --line: #0000001a;
+    --line-soft: #0000000d;
+    --blue: #2563eb;
+    --blue-strong: #1d4ed8;
+    --orange: #f97316;
+    --orange-text: #ea580c;
+  }
+  body.light-mode .hero-bg {
+    background:
+      radial-gradient(circle at 18% 30%, rgba(37, 99, 235, 0.12) 0%, transparent 42%),
+      radial-gradient(circle at 82% 70%, rgba(249, 115, 22, 0.1) 0%, transparent 42%),
+      linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+  }
+  body.light-mode .hero-grid-deco { opacity: .3; }
+  body.light-mode .sidebar-mask { background: rgba(0, 0, 0, 0.3); }
+  body.light-mode .topbar {
+    background: rgba(250, 250, 248, 0.72);
+  }
+  body.light-mode .sidebar-fab {
+    background: rgba(250, 250, 248, 0.9);
+  }
+  body.light-mode .sidebar-fab:hover {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  /* 深浅色切换按钮 */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 6px;
+    background: var(--paper-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .2s;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .theme-toggle:hover {
+    border-color: var(--blue-strong);
+    transform: translateY(-1px);
+  }
+  .theme-toggle-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-strong), var(--orange));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .theme-toggle-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    font-weight: 600;
+    color: var(--blue-strong);
+  }
+  body.light-mode .theme-toggle-text {
+    color: var(--orange-text);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 0 var(--gutter); }
+  .wrap-narrow { max-width: 1400px; margin: 0 auto; padding: 0 var(--gutter); }
+  .main-col .wrap-narrow { max-width: 100%; padding: 0; }
+
+  /* 双栏布局 */
+  .content-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 56px;
+    align-items: start;
+  }
+  .main-col { min-width: 0; }
+  .side-col {
+    position: sticky;
+    top: 88px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* 侧边栏卡片 */
+  .side-card {
+    background: var(--paper-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .side-card h4 {
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .side-card h4::before {
+    content: '';
+    width: 3px; height: 14px;
+    background: var(--blue-strong);
+    border-radius: 2px;
+  }
+
+  /* 数据统计 */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 16px 8px;
+    background: var(--paper);
+    border-radius: 10px;
+    border: 1px solid var(--line-soft);
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--blue-strong), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  /* 热门标签 */
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag-cloud a {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--muted);
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .tag-cloud a:hover {
+    color: var(--blue-strong);
+    border-color: var(--blue-strong);
+    background: rgba(91, 140, 255, 0.08);
+  }
+
+  /* 本期目录快速跳转 */
+  .quick-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .quick-nav li {
+    margin-bottom: 2px;
+  }
+  .quick-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all .15s;
+  }
+  .quick-nav a:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .quick-nav .qn-icon {
+    width: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .quick-nav .qn-text { flex: 1; }
+  .quick-nav .qn-arrow {
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: all .15s;
+    font-size: 11px;
+  }
+  .quick-nav a:hover .qn-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* === 顶部导航 === */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(17, 17, 24, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .topbar-inner {
+    max-width: 1400px; margin: 0 auto;
+    padding: 16px var(--gutter);
+    display: flex; align-items: center; gap: 24px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 84px; height: 35px; flex-shrink: 0; }
+  .brand-text {
+    font-size: 15px; letter-spacing: -.01em;
+    color: var(--ink); font-weight: 650;
+  }
+  .topbar .spacer { flex: 1; }
+  .topbar nav { display: flex; gap: 32px; }
+  .topbar nav a {
+    font-size: 14px; color: var(--muted); letter-spacing: .02em; font-weight: 500;
+    transition: color .2s;
+  }
+  .topbar nav a:hover { color: var(--ink); }
+  .topbar .week-pill {
+    font-family: var(--mono); font-size: 12px; color: var(--blue-strong);
+    letter-spacing: .08em; font-weight: 600;
+    padding: 5px 12px; background: #1d55c712; border-radius: 100px;
+  }
+  /* 侧边栏收起按钮（侧边栏内） */
+  .sidebar-close {
+    position: absolute; top: 12px; right: 12px;
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: transparent; border: none; cursor: pointer;
+    border-radius: 6px; color: var(--muted);
+    transition: all .15s;
+  }
+  .sidebar-close:hover { background: rgba(255,255,255,.06); color: var(--ink); }
+  .sidebar-close svg { width: 14px; height: 14px; }
+
+  /* 折叠后的悬浮打开按钮 */
+  .sidebar-fab {
+    position: fixed;
+    top: 50%; left: 16px;
+    transform: translateY(-50%);
+    z-index: 150;
+    display: none;
+    align-items: center; gap: 8px;
+    padding: 10px 16px 10px 12px;
+    background: rgba(17, 17, 24, 0.7);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--line-soft);
+    border-radius: 100px;
+    cursor: pointer;
+    color: var(--ink); font-size: 12px; font-weight: 600;
+    letter-spacing: .04em;
+    box-shadow: 0 4px 24px rgba(0,0,0,.3);
+    transition: all .2s;
+  }
+  .sidebar-fab:hover { background: rgba(30, 30, 45, .9); border-color: var(--blue-strong); color: var(--blue-strong); }
+  .sidebar-fab svg { width: 16px; height: 16px; }
+  body.sidebar-collapsed .sidebar-fab { display: flex; }
+  @media (max-width: 960px) {
+    .sidebar-fab { display: flex; }
+    body.sidebar-collapsed .sidebar-fab { display: flex; }
+  }
+
+  /* === 左侧飞书风格侧边栏 === */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 260px;
+    background: var(--paper-2);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-right: 1px solid var(--line-soft);
+    z-index: 150;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .3s;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar.collapsed { transform: translateX(-280px); opacity: 0; pointer-events: none; }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--line-soft); border-radius: 2px; }
+
+  /* 侧边栏顶部标题 */
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 18px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    position: sticky;
+    top: 0;
+    background: var(--paper-2);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    z-index: 2;
+    flex-shrink: 0;
+  }
+  .sidebar-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sidebar-logo {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue-strong), #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .sidebar-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .sidebar-title {
+    font-size: 16px;
+    font-weight: 650;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .sidebar-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: .06em;
+  }
+  .sidebar-more-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+  }
+  .sidebar-more-btn:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .sidebar-more-btn svg { width: 18px; height: 18px; }
+
+  /* 侧边栏导航 */
+  .sidebar-nav {
+    padding: 12px 10px 16px;
+    flex: 1;
+  }
+  .ss-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .01em;
+    transition: all .15s;
+    position: relative;
+    border-radius: 10px;
+    border-left: none;
+    margin-bottom: 2px;
+  }
+  .ss-link:hover {
+    color: var(--ink);
+    background: var(--paper);
+  }
+  .ss-link.active {
+    color: var(--blue-strong);
+    background: rgba(91, 140, 255, 0.12);
+    font-weight: 600;
+  }
+  .ss-link .ss-emoji {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+  }
+
+  /* 主内容偏移 - 侧边栏打开时 */
+  .main-content { padding-left: 260px; transition: padding-left .3s cubic-bezier(.4,0,.2,1); }
+  .main-content.sidebar-collapsed { padding-left: 0; }
+
+  /* 折叠后的悬浮打开按钮 */
+  .sidebar-fab {
+    position: fixed;
+    top: 20px; left: 16px;
+    transform: none;
+    z-index: 150;
+    display: none;
+    align-items: center; gap: 8px;
+    padding: 10px 16px 10px 12px;
+    background: var(--paper-2);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--line-soft);
+    border-radius: 100px;
+    cursor: pointer;
+    color: var(--ink); font-size: 13px; font-weight: 600;
+    letter-spacing: .02em;
+    box-shadow: 0 4px 24px rgba(0,0,0,.3);
+    transition: all .2s;
+  }
+  .sidebar-fab:hover { background: rgba(30, 30, 45, .9); border-color: var(--blue-strong); color: var(--blue-strong); }
+  .sidebar-fab svg { width: 16px; height: 16px; }
+  body.sidebar-collapsed .sidebar-fab { display: flex; }
+  @media (max-width: 960px) {
+    .sidebar-fab { display: flex; }
+    .main-content { padding-left: 0; }
+  }
+
+  /* 遮罩（移动端） */
+  .sidebar-mask {
+    position: fixed; inset: 0; background: rgba(16,24,32,.4);
+    z-index: 140; opacity: 0; visibility: hidden;
+    transition: opacity .3s, visibility .3s;
+  }
+  .sidebar-mask.show { opacity: 1; visibility: visible; }
+
+  /* === Hero === */
+  .hero {
+    position: relative;
+    padding: 72px 0 56px;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 18% 30%, #5b8cff25 0%, transparent 42%),
+      radial-gradient(circle at 82% 70%, #ff8c4220 0%, transparent 42%),
+      linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    z-index: -1;
+  }
+  .hero-grid-deco {
+    position: absolute; inset: 0; z-index: -1;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: .5;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+  .hero .kicker {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--mono); font-size: 13px;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--blue-strong); font-weight: 600;
+    margin-bottom: 28px;
+  }
+  .hero .kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+  .hero h1 {
+    font-size: clamp(56px, 7vw, 96px);
+    font-weight: 650; line-height: 1.02; letter-spacing: -.05em;
+    margin-bottom: 24px;
+  }
+  .hero .sub {
+    font-size: clamp(22px, 2.2vw, 32px);
+    font-weight: 400; line-height: 1.35; letter-spacing: -.02em;
+    color: var(--ink); opacity: .7; max-width: 26em;
+    margin-bottom: 40px;
+  }
+  .hero .meta-row {
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+    font-size: 14px; color: var(--muted); letter-spacing: .04em;
+  }
+  .hero .meta-row b { color: var(--ink); font-weight: 650; }
+  .hero .meta-row .sep { width: 4px; height: 4px; border-radius: 50%; background: var(--line); }
+
+  /* === 最新一期大 Banner 卡片 === */
+  .feature { padding: 0 0 64px; }
+  .feature-card {
+    position: relative;
+    display: grid; grid-template-columns: 1fr;
+    border-radius: 12px; overflow: hidden;
+    background: var(--paper-2);
+    border: 1px solid var(--line-soft);
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  .feature-banner {
+    position: relative;
+    aspect-ratio: 21 / 9;
+    background:
+      radial-gradient(circle at 25% 40%, #2f6bff45 0%, transparent 50%),
+      radial-gradient(circle at 78% 65%, #ff690038 0%, transparent 50%),
+      linear-gradient(135deg, #0a1a3a 0%, #101820 100%);
+    overflow: hidden;
+  }
+  .feature-banner::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .feature-banner .award-marks {
+    position: absolute; top: 32px; left: 32px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .feature-banner .award-marks span {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
+    color: #fff; background: rgba(255,255,255,.12);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    padding: 6px 12px; border-radius: 100px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,.18);
+  }
+  .feature-banner .banner-title {
+    position: absolute; left: 32px; right: 32px; bottom: 32px;
+    color: #fff;
+  }
+  .feature-banner .banner-title .week {
+    font-family: var(--mono); font-size: 14px; letter-spacing: .14em;
+    opacity: .75; margin-bottom: 16px; font-weight: 600;
+  }
+  .feature-banner .banner-title h2 {
+    font-size: clamp(28px, 3.2vw, 48px); font-weight: 650;
+    letter-spacing: -.035em; line-height: 1.1;
+    max-width: 18em;
+  }
+  .feature-body {
+    padding: 40px 48px;
+    display: grid; grid-template-columns: 2fr 1fr; gap: 48px;
+    align-items: start;
+  }
+  .feature-body .fb-left .fb-issue {
+    font-family: var(--mono); font-size: 13px; color: var(--blue-strong);
+    letter-spacing: .1em; font-weight: 600; margin-bottom: 14px;
+  }
+  .feature-body .fb-left h3 {
+    font-size: clamp(22px, 2vw, 28px); font-weight: 650;
+    letter-spacing: -.03em; line-height: 1.2; margin-bottom: 16px;
+  }
+  .feature-body .fb-left p {
+    font-size: 16px; line-height: 1.7; color: var(--muted);
+    max-width: 36em; margin-bottom: 20px;
+  }
+  .feature-body .fb-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .feature-body .fb-tags span {
+    font-size: 12px; letter-spacing: .08em; padding: 5px 12px;
+    background: #1d55c714; color: var(--blue-strong); border-radius: 100px; font-weight: 600;
+  }
+  .feature-body .fb-right {
+    display: grid; gap: 14px;
+  }
+  .fb-stat {
+    padding: 20px; background: var(--paper);
+    border-radius: 8px; border-left: 3px solid var(--blue-strong);
+  }
+  .fb-stat.alt { border-left-color: var(--orange); }
+  .fb-stat .num {
+    font-size: 28px; font-weight: 650; letter-spacing: -.04em;
+    color: var(--blue-strong); line-height: 1;
+  }
+  .fb-stat.alt .num { color: var(--orange-text); }
+  .fb-stat .lbl { font-size: 12px; color: var(--muted); margin-top: 6px; letter-spacing: .02em; }
+  @media (max-width: 960px) {
+    .feature-body { grid-template-columns: 1fr; gap: 24px; padding: 28px; }
+  }
+  @media (max-width: 640px) {
+    .feature-body { padding: 20px; }
+    .feature-banner .banner-title { left: 20px; right: 20px; bottom: 20px; }
+    .feature-banner .award-marks { top: 20px; left: 20px; }
+  }
+
+  /* === 内容通用样式 === */
+  .section {
+    padding: 72px 0;
+    border-top: 1px solid var(--line-soft);
+    scroll-margin-top: 80px;
+  }
+  .section-label {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 32px;
+  }
+  .section-emoji { font-size: 28px; }
+  .section-label h2 {
+    font-size: clamp(28px, 3.2vw, 40px); font-weight: 650;
+    letter-spacing: -.035em; line-height: 1.15; flex: 1;
+  }
+  .section-num {
+    font-family: var(--mono); font-size: 12px; color: var(--blue-strong);
+    letter-spacing: .12em; font-weight: 600;
+    padding: 4px 12px; background: #1d55c712; border-radius: 100px;
+  }
+  .section p { margin-bottom: 16px; color: var(--ink); max-width: 42em; }
+  .section p.muted { color: var(--muted); }
+  .section strong { font-weight: 650; color: var(--ink); }
+  .section ul, .section ol { max-width: 42em; }
+  .section blockquote { max-width: 42em; }
+  .section ul, .section ol { margin: 12px 0 20px 24px; }
+  .section li { margin-bottom: 8px; }
+  .section h3 {
+    font-size: 22px; font-weight: 650; letter-spacing: -.02em;
+    margin: 36px 0 16px; line-height: 1.3;
+  }
+  .section h4 {
+    font-size: 18px; font-weight: 650; letter-spacing: -.01em;
+    margin: 28px 0 12px;
+  }
+  .section h5 {
+    font-size: 15px; font-weight: 650; margin: 0 0 6px;
+  }
+  .section blockquote {
+    border-left: 3px solid var(--blue-strong);
+    padding: 14px 20px; margin: 20px 0;
+    background: var(--paper-2); border-radius: 0 6px 6px 0;
+    color: var(--muted); font-style: italic;
+  }
+  .section blockquote strong { font-style: normal; color: var(--ink); }
+  .section a.link {
+    color: var(--blue-strong); font-weight: 600;
+    border-bottom: 1px solid currentColor; padding-bottom: 1px;
+  }
+  .section a.link:hover { opacity: .8; }
+
+  /* === 看板/数据卡片 === */
+  .dashboard {
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 32px; margin-bottom: 32px;
+  }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .stat-cell { padding: 20px; background: var(--paper); border-radius: 6px; border-left: 3px solid var(--blue-strong); }
+  .stat-cell.alt { border-left-color: var(--orange); }
+  .stat-cell .num { font-size: 28px; font-weight: 650; letter-spacing: -.03em; color: var(--blue-strong); line-height: 1; }
+  .stat-cell.alt .num { color: var(--orange-text); }
+  .stat-cell .lbl { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+  /* === 热点卡片 === */
+  .hotspot {
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 36px; margin-bottom: 32px;
+  }
+  .hotspot-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; color: var(--orange-text);
+    letter-spacing: .1em; font-weight: 600;
+    padding: 4px 10px; background: #ff690014; border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  .hotspot h3 { margin-top: 0; }
+  .hotspot .source {
+    font-size: 13px; color: var(--muted); margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 1px solid var(--line-soft);
+  }
+  .award-list {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin: 24px 0;
+  }
+  .award-item {
+    padding: 18px; background: var(--paper); border-radius: 6px;
+    border: 1px solid var(--line-soft);
+  }
+  .award-item .ai-name { font-size: 14px; font-weight: 650; margin-bottom: 6px; }
+  .award-item .ai-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* === 视频卡片 === */
+  .video-card {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px;
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 32px; margin-bottom: 32px;
+    align-items: center;
+  }
+  .video-embed {
+    aspect-ratio: 16 / 9; background: var(--ink); border-radius: 6px; overflow: hidden;
+    position: relative;
+  }
+  .video-embed iframe { width: 100%; height: 100%; border: 0; }
+  .video-body h4 { margin-top: 0; }
+  .video-body .vb-guest { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .video-body .vb-data {
+    display: grid; gap: 10px; margin-top: 16px;
+  }
+  .video-body .vb-data div {
+    font-size: 13px; color: var(--muted);
+    padding: 10px 14px; background: var(--paper); border-radius: 6px;
+  }
+  .video-body .vb-data b { color: var(--ink); }
+
+  /* === 观点块 === */
+  .insight {
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 28px 32px; margin-bottom: 20px;
+    border-left: 3px solid var(--blue-strong);
+  }
+  .insight .insight-num {
+    font-family: var(--mono); font-size: 18px; color: var(--blue-strong);
+    letter-spacing: .02em; font-weight: 700; margin-bottom: 12px;
+  }
+  .insight h4 { margin: 0 0 14px; }
+  .insight blockquote { background: var(--paper); }
+
+  /* === 表格 === */
+  .md-table {
+    width: 100%; border-collapse: collapse; margin: 20px 0;
+    font-size: 15px; background: var(--paper-2);
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--line-soft);
+  }
+  .md-table th, .md-table td {
+    padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line-soft);
+  }
+  .md-table th {
+    background: var(--paper); font-weight: 650; font-size: 13px;
+    letter-spacing: .04em; color: var(--muted);
+  }
+  .md-table tr:last-child td { border-bottom: none; }
+  .md-table td strong { color: var(--ink); }
+
+  /* === 案例拆解 === */
+  .case-study {
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 32px; margin-bottom: 20px;
+  }
+  .case-study h4 { margin-top: 0; }
+  .case-study img.case-img {
+    width: 100%; height: 240px; object-fit: cover;
+    border-radius: 8px; margin: 12px 0 16px;
+    border: 1px solid var(--line-soft);
+  }
+  .tool-hero img.case-img {
+    width: 100%; height: 280px; object-fit: cover;
+    border-radius: 8px; margin: 12px 0 16px;
+    border: 1px solid var(--line-soft);
+  }
+  .case-row { margin: 16px 0; }
+  .case-row .cr-label {
+    font-size: 12px; font-weight: 650; color: var(--blue-strong);
+    letter-spacing: .08em; margin-bottom: 6px;
+  }
+  .case-row p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+  /* === 趋势信号 === */
+  .signal {
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 28px 32px; margin-bottom: 20px;
+  }
+  .signal-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .signal-dot { font-size: 14px; }
+  .signal-tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    font-weight: 600; padding: 3px 10px; border-radius: 100px;
+  }
+  .signal-tag.strong { color: #a54100; background: #ff690014; }
+  .signal-tag.stable { color: #8a6d00; background: #ffd60a14; }
+  .signal-tag.early { color: var(--blue-strong); background: #1d55c712; }
+  .signal h4 { margin: 0 0 12px; }
+
+  /* === 资讯速览 === */
+  .news-table th, .news-table td { font-size: 14px; }
+  .news-table .news-num { font-family: var(--mono); color: var(--blue-strong); font-weight: 650; width: 40px; }
+  .news-table .news-source { color: var(--muted); font-size: 13px; width: 140px; }
+  .news-table .news-desc { color: var(--muted); font-size: 13px; font-weight: 400; line-height: 1.6; }
+
+  /* === 行动建议 === */
+  .todo-section {
+    background: var(--paper-2); border: 1px solid var(--line-soft);
+    border-radius: 8px; padding: 32px; margin-bottom: 20px;
+  }
+  .todo-section h4 { margin-top: 0; display: flex; align-items: center; gap: 8px; }
+  .todo-list { list-style: none; margin: 16px 0 0; padding: 0; }
+  .todo-item {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 16px;
+    align-items: start;
+    padding: 16px 0; border-bottom: 1px solid var(--line-soft);
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-checkbox {
+    width: 22px; height: 22px; border: 2px solid var(--line);
+    border-radius: 6px; flex-shrink: 0; margin-top: 2px;
+    cursor: pointer; transition: all .2s;
+  }
+  .todo-checkbox:hover { border-color: var(--blue-strong); }
+  .todo-checkbox.done { background: var(--blue-strong); border-color: var(--blue-strong); position: relative; }
+  .todo-checkbox.done::after {
+    content: "✓"; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 700;
+  }
+  .todo-title { font-weight: 650; font-size: 15px; margin-bottom: 4px; }
+  .todo-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .todo-priority {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 100px; letter-spacing: .06em;
+    white-space: nowrap;
+  }
+  .priority-high { color: #a54100; background: #ff690014; }
+  .priority-mid { color: #8a6d00; background: #ffd60a14; }
+  .priority-low { color: var(--muted); background: var(--line-soft); }
+
+  .todo-steps {
+    list-style: decimal; margin: 12px 0 0 20px; padding: 0;
+  }
+  .todo-steps li { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+
+  /* === 章节标题（往期） === */
+  .section-head {
+    padding: 96px 0 48px;
+    border-top: 1px solid var(--line);
+  }
+  .section-head .skicker {
+    font-family: var(--mono); font-size: 13px; color: var(--blue-strong);
+    letter-spacing: .14em; font-weight: 600; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .section-head h2 {
+    font-size: clamp(36px, 4vw, 52px); font-weight: 650;
+    letter-spacing: -.04em; line-height: 1.1;
+  }
+  .section-head .sdesc {
+    font-size: 18px; color: var(--muted); margin-top: 16px;
+    max-width: 32em; line-height: 1.6;
+  }
+
+  /* === 往期归档卡片网格 === */
+  .archive { padding: 0 0 120px; }
+  .archive-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  }
+  .arc-card {
+    display: block; padding: 0; background: var(--paper-2);
+    border: 1px solid var(--line-soft); border-radius: 8px;
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .arc-card:hover {
+    transform: translateY(-4px); box-shadow: 0 16px 40px #10182014;
+    border-color: var(--blue-strong);
+  }
+  .arc-cover {
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(circle at 30% 50%, #2f6bff30 0%, transparent 50%),
+      linear-gradient(135deg, #101820 0%, #1a2845 100%);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .arc-cover .arc-cover-num {
+    font-family: var(--mono); font-size: clamp(40px, 5vw, 64px);
+    font-weight: 650; color: rgba(255,255,255,.92);
+    letter-spacing: -.04em;
+  }
+  .arc-cover .arc-cover-week {
+    position: absolute; top: 16px; right: 16px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
+    color: rgba(255,255,255,.7); font-weight: 600;
+  }
+  .arc-body { padding: 24px 28px 28px; }
+  .arc-body .arc-date {
+    font-size: 12px; letter-spacing: .08em; color: var(--muted);
+    margin-bottom: 12px; font-weight: 600; text-transform: uppercase;
+  }
+  .arc-body h3 {
+    font-size: 19px; font-weight: 650; letter-spacing: -.02em;
+    line-height: 1.3; margin-bottom: 10px;
+  }
+  .arc-body .arc-summary {
+    font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px;
+  }
+  .arc-body .arc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .arc-body .arc-tags span {
+    font-size: 11px; letter-spacing: .06em; padding: 3px 10px;
+    background: #1018200b; color: var(--muted); border-radius: 100px; font-weight: 600;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1; padding: 80px 32px; text-align: center;
+    background: var(--paper-2); border: 1px dashed var(--line); border-radius: 8px;
+  }
+  .empty-state p { color: var(--muted); font-size: 15px; }
+  .empty-state .emoji { font-size: 32px; margin-bottom: 16px; display: block; }
+
+  /* === 页脚 === */
+  footer {
+    padding: 64px 0 56px; border-top: 1px solid var(--line);
+    background: var(--paper-2);
+  }
+  footer .wrap {
+    display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+    align-items: center;
+  }
+  footer .foot-brand { display: flex; align-items: center; gap: 12px; }
+  footer .foot-brand svg { width: 100px; height: 42px; }
+  footer .foot-brand .fb-name { font-size: 14px; font-weight: 650; color: var(--ink); }
+  footer .foot-brand .fb-sub { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  footer .foot-meta { font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+  footer .foot-meta b { color: var(--ink); font-weight: 650; }
+
+  /* === 回到顶部 === */
+  .back-top {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 44px; height: 44px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.4);
+    opacity: 0; visibility: hidden; transition: all .3s; z-index: 200;
+  }
+  .back-top.show { opacity: 1; visibility: visible; }
+
+  /* === 新增组件样式 === */
+  /* 对比表格 */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line-soft);
+  }
+  .compare-table th, .compare-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .compare-table th {
+    background: var(--paper-2);
+    font-weight: 650;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child {
+    font-weight: 600;
+    color: var(--blue-strong);
+    width: 120px;
+  }
+  .compare-table .dim-label {
+    background: var(--paper-2);
+    font-weight: 650;
+    color: var(--ink);
+    font-size: 13px;
+  }
+
+  /* Prompt 卡片 */
+  .prompt-card {
+    background: var(--paper-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all .2s;
+  }
+  .prompt-card:hover {
+    border-color: var(--blue-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  }
+  .prompt-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .prompt-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, var(--blue-strong), var(--orange));
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 100px;
+    letter-spacing: .04em;
+  }
+  .prompt-title {
+    font-size: 16px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .prompt-content {
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+    position: relative;
+    white-space: pre-wrap;
+  }
+  .prompt-content::before {
+    content: "💡";
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    font-size: 16px;
+  }
+  .prompt-tip {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .prompt-tip strong { color: var(--orange-text); }
+
+  /* 趋势数据可视化 */
+  .trend-viz {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .trend-item {
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--line-soft);
+  }
+  .trend-num {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--blue-strong), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .trend-label {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .trend-bar {
+    height: 4px;
+    background: var(--line-soft);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .trend-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-strong), var(--orange));
+    border-radius: 2px;
+  }
+
+  /* 反面案例卡片 */
+  .anti-case {
+    background: linear-gradient(135deg, rgba(255, 107, 0, 0.08), rgba(255, 59, 48, 0.06));
+    border: 1px solid rgba(255, 107, 0, 0.2);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .anti-case-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .anti-case-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ff6b00, #ff3b30);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .anti-case-title {
+    font-size: 15px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .anti-case-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .anti-case-lesson {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 107, 0, 0.15);
+    font-size: 13px;
+    color: var(--orange-text);
+    font-weight: 500;
+  }
+  .anti-case-lesson::before {
+    content: "📝 避坑指南：";
+    font-weight: 650;
+  }
+
+  /* === 响应式 === */
+  @media (max-width: 1100px) {
+    .content-layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .side-col {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+  @media (max-width: 960px) {
+    .video-card { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .award-list { grid-template-columns: 1fr; }
+    .archive-grid { grid-template-columns: repeat(2, 1fr); }
+    /* 移动端：侧边栏变抽屉式 */
+    .sidebar {
+      width: 248px;
+      top: 0; left: 0; bottom: 0;
+      transform: none;
+      max-height: none;
+      border-radius: 0;
+      border: none;
+      border-right: 1px solid var(--line-soft);
+      mask-image: none;
+      -webkit-mask-image: none;
+      box-shadow: 4px 0 24px rgba(0,0,0,.4);
+      background: var(--paper-2);
+      padding-top: 24px;
+    }
+    .sidebar.collapsed { transform: translateX(-100%); opacity: 1; }
+    .sidebar-fab { top: 84px; transform: none; }
+  }
+  @media (max-width: 640px) {
+    .archive-grid { grid-template-columns: 1fr; }
+    .topbar nav { display: none; }
+    .hotspot, .video-card, .case-study, .signal, .todo-section { padding: 24px 20px; }
+    .section { padding: 56px 0; }
+    .side-col {
+      grid-template-columns: 1fr;
+    }
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .trend-viz {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .compare-table {
+      font-size: 12px;
+    }
+    .compare-table th, .compare-table td {
+      padding: 10px 8px;
+    }
+    .prompt-card {
+      padding: 16px;
+    }
+    .prompt-content {
+      font-size: 12px;
+    }
+    .anti-case {
+      padding: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== 顶部导航 ========== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-text">Design Weekly</span>
+    </a>
+    <div class="spacer"></div>
+    <nav>
+      <a href="#dashboard">本期</a>
+      <a href="#archive">往期回顾</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换深浅色模式">
+      <span class="theme-toggle-icon" id="themeIcon">🌙</span>
+      <span class="theme-toggle-text" id="themeText">DARK</span>
+    </button>
+  </div>
+</div>
+
+<!-- ========== 左侧悬浮目录 ========== -->
+<aside class="sidebar" id="sidebar">
+  <!-- 顶部标题栏 -->
+  <div class="sidebar-header">
+    <div class="sidebar-header-left">
+      <div class="sidebar-logo">🎨</div>
+      <div class="sidebar-title-wrap">
+          <div class="sidebar-title">设计周刊</div>
+          <div class="sidebar-subtitle">第 2 期 · WEEK 31</div>
+        </div>
+    </div>
+    <button class="sidebar-more-btn" id="sidebarClose" aria-label="收起目录">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- 导航菜单 -->
+  <nav class="sidebar-nav">
+    <a class="ss-link" href="#dashboard" data-target="dashboard">
+      <span class="ss-emoji">📊</span><span>资讯看板</span>
+    </a>
+    <a class="ss-link" href="#insight" data-target="insight">
+      <span class="ss-emoji">💡</span><span>行业判断</span>
+    </a>
+    <a class="ss-link" href="#cases" data-target="cases">
+      <span class="ss-emoji">🏆</span><span>行业案例</span>
+    </a>
+    <a class="ss-link" href="#signals" data-target="signals">
+      <span class="ss-emoji">🛠</span><span>行业工具</span>
+    </a>
+    <a class="ss-link" href="#prompts" data-target="prompts">
+      <span class="ss-emoji">💬</span><span>Prompt 宝库</span>
+    </a>
+    <a class="ss-link" href="#news" data-target="news">
+      <span class="ss-emoji">📰</span><span>资讯速览</span>
+    </a>
+    <a class="ss-link" href="#actions" data-target="actions">
+      <span class="ss-emoji">✅</span><span>行动建议</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- 折叠后的悬浮打开按钮 -->
+<button class="sidebar-fab" id="sidebarFab" aria-label="打开目录">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  <span>目录</span>
+</button>
+
+<div class="sidebar-mask" id="sidebarMask"></div>
+
+<!-- ========== 主内容 ========== -->
+<div class="main-content" id="mainContent">
+
+<!-- ========== Hero ========== -->
+<header class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-deco"></div>
+  <div class="wrap">
+    <div class="kicker">
+      <span class="dot"></span>
+      <span>MIB IEDC TEAM · 设计资讯 · 每周五更新</span>
+    </div>
+    <h1>Design Weekly</h1>
+    <p class="sub" id="hero-sub">Figma 智能画布重塑设计协作，iF 设计趋势报告揭示反 AI 同质化</p>
+    <div class="meta-row">
+      <span><b id="latest-week">Week 31</b></span>
+      <span class="sep"></span>
+      <span id="latest-date">2026.07.29</span>
+      <span class="sep"></span>
+      <span>已发布 <b id="issue-count">2</b> 期</span>
+    </div>
+  </div>
+</header>
+
+<!-- ========== 内容主体双栏布局 ========== -->
+<div class="wrap" style="padding-top: 48px;">
+  <div class="content-layout">
+
+    <!-- 左侧主内容 -->
+    <div class="main-col">
+
+<!-- ========== 📊 资讯看板 ========== -->
+<section class="section" id="dashboard" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">📊</span>
+      <h2>资讯看板 · 整期内容速览</h2>
+      <span class="section-num">第一部分</span>
+    </div>
+
+    <div class="dashboard">
+      <div style="margin-bottom: 24px;">
+        <h3 style="font-size: 22px; font-weight: 650; letter-spacing: -.02em; margin-bottom: 6px;">Figma 智能画布重塑设计协作，iF 设计趋势报告揭示反 AI 同质化</h3>
+        <p style="color: var(--muted); font-size: 14px;">给产品与设计实践者的启发 · 本期 1 款行业工具深度评测 · 8 条核心资讯</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
+        <div style="padding: 20px; background: var(--paper); border-radius: 6px; border-left: 3px solid var(--blue-strong);">
+          <h4 style="font-size: 15px; font-weight: 650; margin-bottom: 12px;">🏆 奖项 · 证据</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px; line-height: 1.9;">
+            <li>· 2026 iF 设计奖公布，11,800+ 作品参赛</li>
+            <li>· iF 首设 AI 赋能设计专项类别</li>
+            <li>· AI 辅助设计获奖占比首次突破 38%</li>
+            <li>· Fairphone 6 模块化手机获 iF 金奖</li>
+            <li>· 可持续材料应用占比达 47%</li>
+            <li>· 中国获奖数 315 件，连续三年增长</li>
+          </ul>
+        </div>
+        <div style="padding: 20px; background: var(--paper); border-radius: 6px; border-left: 3px solid var(--orange);">
+          <h4 style="font-size: 15px; font-weight: 650; margin-bottom: 12px;">🧠 洞察 · 趋势</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px; line-height: 1.9;">
+            <li>· Figma 推出智能画布，设计+代码+动效一体</li>
+            <li>· iF 趋势报告：反 AI 同质化成新主流</li>
+            <li>· 设计从「消除摩擦」转向「添加正确摩擦」</li>
+            <li>· Apple 发布 iOS 27 / macOS 27 公测版</li>
+            <li>· 液态玻璃设计迭代，支持透明度自定义</li>
+            <li>· 设计系统从给人看 → 给 AI 读的约束</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        <div style="padding: 16px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line-soft);">
+          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">体验 Figma 智能画布</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">Code Layers + Motion + Shaders</p>
+        </div>
+        <div style="padding: 16px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line-soft);">
+          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">加载 apple-design Skill</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">给 AI 加上设计品味约束</p>
+        </div>
+        <div style="padding: 16px; background: var(--paper); border-radius: 6px; border: 1px solid var(--line-soft);">
+          <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">建立差异化设计机制</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">对抗 AI 同质化的团队流程</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 💡 行业判断 ========== -->
+<section class="section" id="insight" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">💡</span>
+      <h2>行业判断 · iF 2026 设计趋势报告</h2>
+      <span class="section-num">第二部分</span>
+    </div>
+
+    <blockquote>
+      <strong>5 trends in design right now · iF Design Trend Report 2026</strong><br>
+      来源：Fast Company × iF Design 第五届年度设计趋势报告<br>
+      🔗 <a class="link" href="https://www.fastcompany.com/91570208/5-trends-in-design-right-now" target="_blank">阅读原文 →</a>
+    </blockquote>
+
+    <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1200&q=80" alt="设计趋势" style="width: 100%; border-radius: 12px; margin-bottom: 24px;">
+
+    <h4>📌 报告核心背景</h4>
+    <p>2026 年 7 月，iF Design 发布第五届年度设计趋势报告。与往年不同，今年报告的核心发现是：</p>
+    <blockquote style="border-left-color: var(--orange);"><strong>2026 年设计界最重要的故事不是 AI，而是设计师和设计如何回应 AI。</strong></blockquote>
+    <p>当生成式工具让创作变得更快、更便宜、也更趋同时，最有影响力的设计师正在有意识地向相反方向前进——创造意义、拥抱不完美、为社区而设计。</p>
+
+    <div class="insight">
+      <div class="insight-num">趋势一：差异化成为新的「奢侈品」</div>
+      <blockquote>"AI 一个挥之不去的副作用是「平均时代」——算法复制已存在的东西，因为那是它们被训练的方式，也是它们被设计成偏好的东西。熟悉的美学、行为和解决方案将大行其道。"<br>—— iF Design Trend Report 2026</blockquote>
+      <p><strong>核心洞察</strong>：</p>
+      <ul>
+        <li>生成式工具普及后，<strong>效率不再稀缺，独特性才是</strong></li>
+        <li>2026 年的竞争优势是抵抗 AI 趋同性的能力</li>
+        <li>对品牌识别、产品开发、零售体验、奢侈品、娱乐领域影响尤其深远</li>
+      </ul>
+      <p><strong>案例</strong>：</p>
+      <ul>
+        <li><strong>现代 Night Fishing</strong>：完全用 IONIQ 5 车载摄像头拍摄的短片，用技术限制创造独特质感</li>
+        <li><strong>404 NOT FOUND 咖啡品牌</strong>：把社交媒体的 404 符号转化为实体品牌语言，鼓励人们重新连接真实世界互动</li>
+      </ul>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">趋势二：设计师成为「摩擦策展人」</div>
+      <p>报告提出了一个新概念——<strong>「Skillization」（技能化）</strong>：</p>
+      <blockquote>当 AI 让更多体验变得毫不费力和被动时，人们反而珍视相反的东西。他们想要被挑战、想要动手学习、想要掌握技能。</blockquote>
+      <p><strong>UX 设计的范式反转</strong>：</p>
+      <table class="md-table">
+        <tr><th>过去十年</th><th>2026 年</th></tr>
+        <tr><td>好 UX = 消除摩擦</td><td>好设计 = 加回「正确的摩擦」</td></tr>
+        <tr><td>让用户更省力</td><td>让用户获得成就感</td></tr>
+        <tr><td>「一键完成」是褒义词</td><td>「需要学习」可能是卖点</td></tr>
+      </table>
+      <p><strong>表现形式</strong>：</p>
+      <ul>
+        <li>健康类 App：帮助用户建立习惯，而不是自动化替代</li>
+        <li>工作空间设计：优先考虑创造力而非效率</li>
+        <li>产品设计：帮助用户培养专业技能</li>
+        <li>学习体验：奖励付出的努力</li>
+      </ul>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">趋势三：真实性——从品牌话术到设计方法</div>
+      <p>当完美变得更容易制造时，不完美反而更受尊重。几乎任何人都能在 AI 帮助下生成精致的内容，所以真实性变得更有意义。</p>
+      <blockquote>"不完美能以完美永远无法做到的方式打动人。有意的、创造性的不完美是设计最强大的工具之一。"<br>—— Naoki Tanaka, Dentsu Lab（日本）</blockquote>
+      <p><strong>真实性的设计表达</strong>：</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0;">
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>✋ 手工感元素</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">木材、皮革、陶瓷、天然纤维</span>
+        </div>
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>⏳ 过程价值</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">强调时间价值、工艺、文化传承</span>
+        </div>
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>📱 模拟触点</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">实体空间、线下聚会、物理交互</span>
+        </div>
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>✏️ 零华丽美学</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">手写体、草图、可见的人的痕迹</span>
+        </div>
+      </div>
+      <p><strong>案例</strong>：Genesis（捷尼赛思）将韩国茶文化融入展厅，强调人与人的接触、仪式感和真实性。</p>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">趋势四：品牌成为文化参与者，而非广播者</div>
+      <p>为大众设计正在让位于为特定社区设计。注意力经济越来越碎片化，催生了「微观经济」——在微观经济中，<strong>相关性胜过规模</strong>。</p>
+      <p><strong>品牌策略的转变</strong>：</p>
+      <ul>
+        <li>从「面向所有人」转向「为特定群体深度服务」</li>
+        <li>品牌开始表明立场——即使这会疏远部分受众</li>
+        <li>迷因、政治设计符号、社区美学（怀旧、超本地化、用户生成内容）被大量运用</li>
+      </ul>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">趋势五：设计从「物品」扩展到「关系」</div>
+      <p>设计不再只塑造独立的产品，而是塑造系统、关系和互动。很多设计师发现自己的角色正在从「事物的创造者」演变为「连接的编排者」。</p>
+      <p><strong>案例</strong>：</p>
+      <ul>
+        <li><strong>BIG 建筑事务所的 Biosphere</strong>：一个围绕人类与野生动物共存设计的酒店体验</li>
+        <li><strong>Reef of Hope</strong>：一个可生物降解的珊瑚礁系统，帮助恢复海洋生态</li>
+      </ul>
+    </div>
+
+    <h4>🎯 对设计团队的启示</h4>
+
+    <div class="insight">
+      <div class="insight-num">1. 重新定义设计价值</div>
+      <ul>
+        <li>当 AI 能快速生成 100 个方案时，<strong>判断哪个方案好</strong>比生成方案更重要</li>
+        <li>设计团队的 KPI 应该从「产出数量」转向「差异化程度」</li>
+        <li>建立团队的「设计品味」提升机制，对抗 AI 同质化</li>
+      </ul>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">2. 学会「添加正确的摩擦」</div>
+      <ul>
+        <li>不是所有场景都要追求「最省力」</li>
+        <li>在用户希望获得掌控感、成就感的场景，适当增加学习成本</li>
+        <li>区分「必要的摩擦」和「不必要的摩擦」</li>
+      </ul>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">3. 给 AI 加上「设计约束」</div>
+      <ul>
+        <li>AI 不缺乏能力，缺乏品味——品味学不出来，但可以被约束出来</li>
+        <li>把团队的设计规范、品牌调性写成 AI 能读懂的约束规则</li>
+        <li>参考 apple-design Skill 的思路，建立自己团队的「设计系统 Skill」</li>
+      </ul>
+    </div>
+
+    <div class="insight">
+      <div class="insight-num">4. 从「视觉设计者」到「体验策展人」</div>
+      <ul>
+        <li>设计师的角色正在从创造者转向策展人、编排者</li>
+        <li>不仅要考虑单个界面，还要考虑用户与产品之间的「关系」</li>
+        <li>培养系统思维和社区思维</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 🏆 行业案例 ========== -->
+<section class="section" id="cases" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">🏆</span>
+      <h2>行业案例 · 2026 iF 设计奖专题</h2>
+      <span class="section-num">第三部分</span>
+    </div>
+
+    <!-- iF 设计奖总览 -->
+    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin-bottom: 28px;">
+      <h4 style="margin-top: 0;">🏆 iF 设计奖简介</h4>
+      <p>iF 设计奖（iF Design Award）创立于 1953 年，由德国 iF 国际论坛设计有限公司主办，是历史最悠久的工业设计奖项之一，与红点奖、美国 IDEA 奖并称<strong>世界三大设计奖项</strong>。</p>
+      <p>2026 年度 iF 设计奖共收到来自 <strong>58 个国家的 11,800 余件</strong>参赛作品，整体获奖率约 22%，较 2025 年下降 3 个百分点，竞争激烈程度创历史新高。</p>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0;">
+        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
+          <div style="font-size: 24px; font-weight: 700; color: var(--blue-strong);">11,800+</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">参赛作品</div>
+        </div>
+        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
+          <div style="font-size: 24px; font-weight: 700; color: var(--blue-strong);">22%</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">整体获奖率</div>
+        </div>
+        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
+          <div style="font-size: 24px; font-weight: 700; color: var(--orange);">38%</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">AI 辅助设计占比</div>
+        </div>
+        <div style="text-align: center; background: var(--paper); padding: 16px; border-radius: 10px;">
+          <div style="font-size: 24px; font-weight: 700; color: var(--orange);">315</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">中国获奖数</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- iF 设计奖数据趋势 -->
+    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin-bottom: 28px;">
+      <h4 style="margin-top: 0;">📈 iF 设计奖 AI 与可持续趋势数据</h4>
+      <p style="font-size: 14px; color: var(--muted); margin-bottom: 4px;">近三年核心指标变化</p>
+      <div class="trend-viz">
+        <div class="trend-item">
+          <div class="trend-num">38%</div>
+          <div class="trend-label">2026<br>AI 辅助设计占比</div>
+          <div class="trend-bar"><div class="trend-bar-fill" style="width: 100%;"></div></div>
+        </div>
+        <div class="trend-item">
+          <div class="trend-num">26%</div>
+          <div class="trend-label">2025<br>AI 辅助设计占比</div>
+          <div class="trend-bar"><div class="trend-bar-fill" style="width: 68%;"></div></div>
+        </div>
+        <div class="trend-item">
+          <div class="trend-num">47%</div>
+          <div class="trend-label">2026<br>可持续材料应用</div>
+          <div class="trend-bar"><div class="trend-bar-fill" style="width: 100%;"></div></div>
+        </div>
+        <div class="trend-item">
+          <div class="trend-num">38%</div>
+          <div class="trend-label">2025<br>可持续材料应用</div>
+          <div class="trend-bar"><div class="trend-bar-fill" style="width: 81%;"></div></div>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px;">
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 800; color: var(--orange-text);">12%</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">AI 占比同比增长</div>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 800; color: var(--blue-strong);">1,200+</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">AI 专项参赛作品</div>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 800; background: linear-gradient(135deg, var(--blue-strong), var(--orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">首设</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">AI 赋能设计专项奖</div>
+        </div>
+      </div>
+      <blockquote style="margin-top: 20px;">
+        <strong>💡 编辑观察</strong>：AI 与可持续已从「加分项」变成「准入门槛」。超过 40% 的获奖作品使用了再生或生物基材料，而 AI 工具则从概念探索进入实质性产出阶段。但评审对「人的温度」要求反而更高——纯 AI 生成作品的获奖率远低于平均水平。
+      </blockquote>
+    </div>
+
+    <!-- 案例一：Fairphone 6 -->
+    <div class="case-study">
+      <h4>案例一：Fairphone 6 —— 可持续设计的极致实践</h4>
+      <img class="case-img" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&h=675&fit=crop" alt="Fairphone 6 可持续设计">
+      <p><strong>来源</strong>：iF Design Award 2026 ｜ <strong>时间</strong>：2026年5月 ｜ <strong>类别</strong>：产品设计 · 通讯类</p>
+      <p>Fairphone 6 是荷兰 Fairphone 公司推出的第六代模块化可持续智能手机，在 2026 iF 设计奖中荣获<strong>产品设计类金奖</strong>。这款手机以「真正的循环经济」为设计理念，从材料选择、生产制造到维修回收全链路贯彻可持续原则。</p>
+      <p><strong>关键数据</strong>：机身 100% 再生铝框架 ｜ 7 个可独立更换模块 ｜ 5 年官方保修 ｜ 减少 40% 碳足迹</p>
+      <p>🔗 <a class="link" href="https://www.fairphone.com/" target="_blank">了解更多 →</a></p>
+
+      <h5 style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line-soft);">🔍 案例拆解：Fairphone 6 可持续设计</h5>
+      <blockquote><strong>分析框架</strong>：看到的细节 → 带来的体验 → 可迁移的方法</blockquote>
+      <img class="case-img" src="https://images.unsplash.com/photo-1556656793-08538906a9f8?w=1200&h=675&fit=crop" alt="Fairphone 模块化设计">
+
+      <h4 style="margin-top: 20px;">🎯 细节一：模块化可维修设计</h4>
+      <p><strong>看到的细节</strong>：手机被拆解为 7 个独立模块——屏幕、电池、主板、相机、扬声器、充电端口、后盖，每个模块都可以通过专用螺丝刀在 5 分钟内完成更换。后盖采用卡扣设计，无需任何工具即可打开。</p>
+      <p><strong>带来的体验</strong>：用户不再因为电池老化或屏幕碎裂就更换整部手机，大幅延长设备使用寿命。维修成本降低 60% 以上，电子废弃物减少 70%。用户在维修过程中获得掌控感和成就感。</p>
+      <p><strong>可迁移的方法</strong>：在产品设计之初就考虑「可维修性」，将易损件设计为可独立更换的模块。提供清晰的维修指南和工具，让用户能够自行维护。将「使用寿命」作为核心设计指标，而非单纯追求轻薄。</p>
+
+      <h4>🎯 细节二：再生材料与公平贸易</h4>
+      <p><strong>看到的细节</strong>：机身框架采用 100% 再生铝合金，后盖使用再生塑料。电池中的钴、锡、钨等矿物来自经过公平贸易认证的矿山，确保矿工获得合理报酬和安全工作环境。包装使用 100% 再生纸板，不含任何塑料内衬。</p>
+      <p><strong>带来的体验</strong>：用户购买的不仅是一部手机，更是一种「负责任消费」的身份认同。透明的供应链让用户知道自己的钱花在了哪里，建立深度品牌信任。</p>
+      <p><strong>可迁移的方法</strong>：建立材料溯源体系，向用户公开供应链信息。优先选择再生材料，即使成本略高。将「社会影响」纳入设计评估维度，而不仅仅是功能和美学。</p>
+
+      <h4>🎯 细节三：软件支持与长寿设计</h4>
+      <p><strong>看到的细节</strong>：Fairphone 承诺提供 5 年操作系统更新和 7 年安全补丁，远超行业平均的 2-3 年。手机设计时就为未来的硬件升级预留了空间——主板采用可插拔设计，未来可以单独升级处理器。</p>
+      <p><strong>带来的体验</strong>：用户 5 年内无需担心手机被「计划性淘汰」，一次投资长期使用。软件的持续更新让老设备也能享受新功能，减少了「越用越慢」的焦虑。</p>
+      <p><strong>可迁移的方法</strong>：软件支持周期应与硬件寿命匹配，甚至更长。在硬件设计中预留升级空间，避免「焊死」所有组件。将产品生命周期视为完整的用户体验，而非仅关注首次购买。</p>
+    </div>
+
+    <!-- 案例二：Honda WN7 -->
+    <div class="case-study">
+      <h4>案例二：本田 WN7 概念车 —— 移动空间的重新定义</h4>
+      <img class="case-img" src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1200&h=675&fit=crop" alt="本田 WN7 概念车">
+      <p><strong>来源</strong>：iF Design Award 2026 ｜ <strong>时间</strong>：2026年5月 ｜ <strong>类别</strong>：专业概念 · 汽车设计</p>
+      <p>本田 WN7 概念车在 2026 iF 设计奖中荣获<strong>专业概念类金奖</strong>。这款概念车探索了自动驾驶时代「移动空间」的全新可能性——当驾驶不再是人类的任务，汽车应该变成什么样？</p>
+
+      <h5>🏅 核心设计亮点</h5>
+      <ol>
+        <li><strong>可变空间布局</strong>
+          <ul>
+            <li>座舱可在「驾驶模式」「办公模式」「休闲模式」「会议模式」间一键切换</li>
+            <li>座椅可 360° 旋转，支持面对面交流</li>
+            <li>中控屏可升降收起，释放空间</li>
+          </ul>
+        </li>
+        <li><strong>情感化交互设计</strong>
+          <ul>
+            <li>AI 助手通过语气、表情灯、座椅震动等多模态方式与乘客交流</li>
+            <li>车内氛围灯根据乘客情绪自动调节</li>
+            <li>车门处的「欢迎光毯」在用户接近时自动点亮</li>
+          </ul>
+        </li>
+        <li><strong>可持续材料创新</strong>
+          <ul>
+            <li>内饰采用生物基材料，如大豆泡沫座椅、亚麻纤维门板</li>
+            <li>使用再生铝合金车身，减少 50% 生产碳排放</li>
+            <li>可回收比例达 95% 以上</li>
+          </ul>
+        </li>
+      </ol>
+      <blockquote>iF 评审团评语："WN7 不仅仅是一款车，更是一个移动的生活空间。它重新定义了我们与交通工具的关系——从「驾驶工具」到「陪伴空间」。"</blockquote>
+      <p>🔗 <a class="link" href="https://www.honda.com/" target="_blank">了解更多 →</a></p>
+    </div>
+
+    <!-- 案例三：iA Notebook -->
+    <div class="case-study">
+      <h4>案例三：iA Notebook —— 回归本质的写作体验设计</h4>
+      <img class="case-img" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&h=675&fit=crop" alt="iA Notebook 写作体验">
+      <p><strong>来源</strong>：iF Design Award 2026 ｜ <strong>时间</strong>：2026年5月 ｜ <strong>类别</strong>：服务设计 · 软件产品</p>
+      <p>iA Notebook 是信息架构师 Oliver Reichenstein 创办的 iA 公司推出的写作应用，在 2026 iF 设计奖中荣获<strong>服务设计类金奖</strong>。这款 App 以「反 AI 焦虑」的姿态出现——它不帮你写，而是帮你<strong>专注地写</strong>。</p>
+
+      <h5>🏅 核心设计理念</h5>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+        <div style="padding: 14px; background: var(--paper-2); border-radius: 10px;">
+          <strong>🚫 减法设计</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">没有格式工具栏、没有社交功能、没有通知推送。打开就是一张白纸，你唯一能做的就是写。</span>
+        </div>
+        <div style="padding: 14px; background: var(--paper-2); border-radius: 10px;">
+          <strong>🧘 专注模式</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">「写作模式」下，只有当前行是清晰的，其他文字会逐渐变淡，引导用户聚焦当下。</span>
+        </div>
+        <div style="padding: 14px; background: var(--paper-2); border-radius: 10px;">
+          <strong>📊 结构化思维</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">内置 Markdown 支持，通过标题层级自然形成文章结构。「内容块」功能让段落可以拖拽重组。</span>
+        </div>
+        <div style="padding: 14px; background: var(--paper-2); border-radius: 10px;">
+          <strong>📖 阅读模式</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">一键切换为排版精美的阅读视图，模拟纸质书阅读体验，帮助作者以读者视角审视作品。</span>
+        </div>
+      </div>
+      <blockquote style="margin-top: 20px;">
+        <strong>💡 设计启示</strong>：在 AI 工具泛滥的时代，「不做什么」和「做什么」同样重要。iA Notebook 的成功证明了——当所有产品都在拼命加功能时，<strong>减法设计反而成为稀缺品</strong>。真正好的设计，是帮助用户找回专注力，而不是分散注意力。
+      </blockquote>
+      <p>🔗 <a class="link" href="https://ia.net/writer" target="_blank">了解更多 →</a></p>
+    </div>
+
+    <!-- 三大案例对比 -->
+    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin: 28px 0;">
+      <h4 style="margin-top: 0;">⚖️ 深度对比：三个金奖案例的设计哲学</h4>
+      <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">从硬件、概念到软件，看 iF 金奖的共同特质与差异化路径</p>
+      
+      <table class="compare-table">
+        <tr>
+          <th>对比维度</th>
+          <th>Fairphone 6</th>
+          <th>本田 WN7</th>
+          <th>iA Notebook</th>
+        </tr>
+        <tr>
+          <td colspan="4" class="dim-label">🎯 核心设计理念</td>
+        </tr>
+        <tr>
+          <td>设计主张</td>
+          <td>可持续 · 循环经济</td>
+          <td>移动空间 · 情感陪伴</td>
+          <td>专注写作 · 减法设计</td>
+        </tr>
+        <tr>
+          <td>反潮流方向</td>
+          <td>反「计划性报废」</td>
+          <td>反「工具化移动」</td>
+          <td>反「AI 写作焦虑」</td>
+        </tr>
+        <tr>
+          <td>用户价值</td>
+          <td>长期主义 · 责任感</td>
+          <td>空间自由 · 情感连接</td>
+          <td>专注力 · 创作掌控</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="dim-label">💡 设计方法</td>
+        </tr>
+        <tr>
+          <td>创新层级</td>
+          <td>系统级创新（供应链）</td>
+          <td>概念级创新（场景）</td>
+          <td>体验级创新（交互）</td>
+        </tr>
+        <tr>
+          <td>AI 角色</td>
+          <td>辅助优化（材料分析）</td>
+          <td>核心赋能（情感交互）</td>
+          <td>刻意缺席（反 AI）</td>
+        </tr>
+        <tr>
+          <td>可持续性</td>
+          <td>核心设计目标</td>
+          <td>重要设计原则</td>
+          <td>间接体现（减少消耗）</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="dim-label">🏆 获奖原因</td>
+        </tr>
+        <tr>
+          <td>iF 评价</td>
+          <td>重新定义电子产品生命周期</td>
+          <td>重新定义移动空间</td>
+          <td>重新定义数字创作体验</td>
+        </tr>
+        <tr>
+          <td>社会意义</td>
+          <td>推动循环经济</td>
+          <td>探索未来出行</td>
+          <td>捍卫人类专注力</td>
+        </tr>
+      </table>
+      
+      <div style="margin-top: 20px; padding: 16px; background: var(--paper); border-radius: 10px; border-left: 4px solid var(--blue-strong);">
+        <strong style="color: var(--blue-strong);">💡 编辑观点</strong>
+        <p style="margin: 8px 0 0; font-size: 14px; color: var(--muted); line-height: 1.7;">
+          三个金奖案例看似截然不同——一个做硬件、一个做概念、一个做软件，但它们都有着共同的底层逻辑：<strong>在技术狂奔的时代，回归「人」本身</strong>。
+          Fairphone 关心人与地球的关系，本田 WN7 关心人与空间的关系，iA Notebook 关心人与自己的关系。
+          这正是 2026 iF 设计奖传递的核心信号：<strong>好的设计，不是让技术更炫，而是让生活更真</strong>。
+        </p>
+      </div>
+    </div>
+
+    <!-- 其他 iF 金奖精选 -->
+    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 24px; border-radius: 14px; margin-top: 28px;">
+      <h4 style="margin-top: 0;">📌 更多 2026 iF 金奖作品精选</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>🪑 IKEA Nytillverkad 系列</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">宜家 80 周年特别系列，从档案库中重新诠释经典设计，融合复古美学与现代可持续材料。家具设计类金奖。</span><br>
+          <a class="link" href="https://www.ikea.com/" target="_blank" style="font-size: 12px;">查看详情 →</a>
+        </div>
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>🎧 Sony WH-1000XM6 耳机</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">第六代降噪耳机，搭载 AI 自适应降噪，可实时分析环境噪音与用户状态，智能调节降噪等级。音频设备类金奖。</span><br>
+          <a class="link" href="https://www.sony.com/" target="_blank" style="font-size: 12px;">查看详情 →</a>
+        </div>
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>🏥 美的医疗 AI 影像诊断系统</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">中国团队出品，AI 辅助肺部 CT 影像诊断，准确率达 96%，将诊断时间从 30 分钟缩短至 3 分钟。医疗设计类金奖。</span><br>
+          <a class="link" href="https://www.midea.com/" target="_blank" style="font-size: 12px;">查看详情 →</a>
+        </div>
+        <div style="padding: 14px; background: var(--paper); border-radius: 10px;">
+          <strong>🚴 小牛电动 RQi  Pro</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">高性能电动摩托车，一体式压铸车身，AI 智能骑行辅助系统，续航 200km。交通设计类金奖，中国设计团队获奖。</span><br>
+          <a class="link" href="https://www.niu.com/" target="_blank" style="font-size: 12px;">查看详情 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 🛠️ 行业工具 ========== -->
+<section class="section" id="signals" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">🛠️</span>
+      <h2>行业工具 · Figma 智能画布深度解析</h2>
+      <span class="section-num">第四部分</span>
+    </div>
+
+    <div class="case-study" style="background: var(--paper-2); border: 1px solid var(--line-soft); padding: 28px; border-radius: 14px;">
+      <h3 style="margin-top: 0;">Figma Intelligent Canvas · 智能画布</h3>
+      <p style="font-size: 15px; color: var(--muted); margin-bottom: 16px;"><strong style="color: var(--ink);">AI 原生设计画布</strong>，从「设计师操作工具」进化为「AI 协作者共同工作空间」</p>
+      <p style="font-size: 14px; margin-bottom: 16px;">
+        🔗 <a class="link" href="https://www.figma.com/" target="_blank">官方网站</a> ｜
+        <a class="link" href="https://www.figma.com/blog/" target="_blank">官方博客</a> ｜
+        <a class="link" href="https://help.figma.com/hc/en-us" target="_blank">帮助文档</a> ｜
+        <a class="link" href="https://www.youtube.com/@Figma" target="_blank">YouTube 教程</a>
+      </p>
+
+      <h4 style="margin-top: 24px;">🌟 六大核心能力</h4>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0;">
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">🪄</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">Make Design</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">描述需求生成界面</p>
+        </div>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">📝</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">Make Summary</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">自动生成会议纪要</p>
+        </div>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">🧠</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">Context Aware</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">理解画布上下文</p>
+        </div>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">🔄</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">Auto Layout AI</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">智能布局与响应式</p>
+        </div>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">🎨</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">Component AI</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">组件变体自动生成</p>
+        </div>
+        <div style="background: var(--paper); padding: 16px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px;">💬</div>
+          <h5 style="margin: 6px 0 2px; font-size: 14px;">Inline Chat</h5>
+          <p style="font-size: 12px; color: var(--muted); margin: 0;">画布内对话式操作</p>
+        </div>
+      </div>
+
+      <h4 style="margin-top: 24px;">🔀 设计师工作流变化</h4>
+      <table class="md-table" style="margin: 12px 0;">
+        <tr><th>工作环节</th><th>传统方式</th><th>智能画布方式</th><th>效率提升</th></tr>
+        <tr>
+          <td><strong>需求理解</strong></td>
+          <td>读文档、画流程图</td>
+          <td>上传 PRD，AI 生成信息架构</td>
+          <td>⬆️ 60%</td>
+        </tr>
+        <tr>
+          <td><strong>草图探索</strong></td>
+          <td>手绘、线框图迭代</td>
+          <td>描述需求，AI 生成多套方案</td>
+          <td>⬆️ 70%</td>
+        </tr>
+        <tr>
+          <td><strong>视觉设计</strong></td>
+          <td>拖拽组件、调整样式</td>
+          <td>AI 匹配设计系统、自动布局</td>
+          <td>⬆️ 50%</td>
+        </tr>
+        <tr>
+          <td><strong>评审协作</strong></td>
+          <td>开会、记录、整理反馈</td>
+          <td>AI 实时记录、自动生成待办</td>
+          <td>⬆️ 80%</td>
+        </tr>
+      </table>
+
+      <h4 style="margin-top: 24px;">💼 设计师高频使用场景</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0;">
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
+          <strong>🚀 快速原型验证</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">用自然语言描述想法，AI 生成可交互原型</span>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
+          <strong>📋 设计系统扩展</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">基于现有组件，AI 自动生成新组件变体</span>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
+          <strong>📝 设计评审纪要</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">会议中自动记录评论，整理为行动项清单</span>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
+          <strong>📱 响应式适配</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">设计好桌面版，AI 自动生成移动端适配</span>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
+          <strong>🎯 用户走查脚本</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">基于设计稿自动生成可用性测试任务脚本</span>
+        </div>
+        <div style="background: var(--paper); padding: 14px; border-radius: 10px;">
+          <strong>📊 设计规范文档</strong><br>
+          <span style="font-size: 13px; color: var(--muted);">AI 自动从设计稿提取组件规范与使用说明</span>
+        </div>
+      </div>
+
+      <blockquote style="margin-top: 24px; background: var(--paper); border-left: 4px solid var(--orange);">
+        <strong>💡 深度观察：设计协作的范式转移</strong>
+        <ul style="margin: 8px 0 0; padding-left: 18px;">
+          <li><strong>从「工具」到「协作者」</strong>：智能画布不再是被动等待操作的工具，而是能主动理解意图、提供建议的「AI 设计伙伴」</li>
+          <li><strong>从「个体创作」到「人机共创」</strong>：设计师的核心价值从「绘制」转向「判断」——定义方向、评估质量、做出决策</li>
+          <li><strong>从「设计交付」到「过程资产」</strong>：画布中的每一次讨论、每一轮迭代、每一个决策都被记录和沉淀</li>
+          <li><strong>从「设计师专属」到「全员参与」</strong>：产品经理、开发工程师也能在画布中直接表达想法，降低协作门槛</li>
+        </ul>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 💬 Prompt 宝库 ========== -->
+<section class="section" id="prompts" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">💬</span>
+      <h2>Prompt 宝库 · 设计师实用提示词</h2>
+      <span class="section-num">Bonus</span>
+    </div>
+
+    <p style="font-size: 15px; color: var(--muted); margin-bottom: 24px;">
+      精选 3 个设计师高频使用的 AI 提示词，直接复制可用，搭配 WorkBuddy / ChatGPT / Claude 效果更佳。
+    </p>
+
+    <!-- Prompt 1: 设计需求拆解 -->
+    <div class="prompt-card">
+      <div class="prompt-header">
+        <span class="prompt-tag">🔥 热门</span>
+        <span class="prompt-title">设计需求快速拆解</span>
+      </div>
+      <div class="prompt-content">你是一位资深的 UX 设计师，请帮我拆解以下设计需求：
+
+【需求描述】
+{在这里粘贴你的需求}
+
+请从以下维度进行拆解：
+1. 🎯 核心目标：用户要达成什么？
+2. 👥 用户画像：目标用户是谁？有什么特征？
+3. 🔑 关键场景：用户在什么场景下使用？
+4. 📋 功能清单：必须有哪些功能？哪些是锦上添花？
+5. ⚠️ 约束条件：有什么技术/时间/资源限制？
+6. 💡 设计建议：基于以上分析，给出 3 个设计方向建议
+
+请用清晰的层级结构输出，语言简洁专业。</div>
+      <div class="prompt-tip">
+        <strong>适用场景：</strong>
+        <span>接到模糊需求时快速理清思路，对齐产品经理预期</span>
+      </div>
+    </div>
+
+    <!-- Prompt 2: 界面文案优化 -->
+    <div class="prompt-card">
+      <div class="prompt-header">
+        <span class="prompt-tag" style="background: linear-gradient(135deg, #10b981, var(--blue-strong));">✨ 实用</span>
+        <span class="prompt-title">界面文案润色优化</span>
+      </div>
+      <div class="prompt-content">你是一位资深的产品文案专家，请帮我优化以下界面文案：
+
+【当前文案】
+{在这里粘贴你要优化的文案}
+
+【使用场景】
+{描述这个文案出现在什么界面、用户处于什么状态}
+
+请从以下角度优化并给出 3 个版本：
+1. 简洁版：最精炼的表达，控制在 12 字以内
+2. 友好版：更有温度，拉近与用户的距离
+3. 专业版：更正式严谨，适合 B 端产品
+
+同时请说明每个版本的适用场景和优缺点。</div>
+      <div class="prompt-tip">
+        <strong>适用场景：</strong>
+        <span>按钮文案、空状态提示、错误提示等界面文案的快速优化</span>
+      </div>
+    </div>
+
+    <!-- Prompt 3: 竞品分析 -->
+    <div class="prompt-card">
+      <div class="prompt-header">
+        <span class="prompt-tag" style="background: linear-gradient(135deg, var(--orange), #f59e0b);">📊 高效</span>
+        <span class="prompt-title">竞品设计分析框架</span>
+      </div>
+      <div class="prompt-content">请帮我对以下产品做设计维度的竞品分析：
+
+【产品名称】
+{竞品产品名}
+
+【分析重点】
+{我们关注的功能/模块}
+
+请从以下维度进行分析：
+1. 🎨 视觉风格：配色、字体、整体调性
+2. 🔄 交互流程：核心任务的操作路径、步数
+3. 🧠 信息架构：导航结构、内容组织方式
+4. 💡 亮点设计：3 个值得借鉴的设计细节
+5. ⚠️ 可改进点：3 个我们可以做得更好的地方
+6. 🎯 对我们的启示：可以直接应用到我们产品中的建议
+
+请用表格形式呈现对比，最后给出总结建议。</div>
+      <div class="prompt-tip">
+        <strong>适用场景：</strong>
+        <span>竞品调研、项目前期分析、寻找设计参考</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; padding: 16px 20px; background: var(--paper-2); border-radius: 12px; border: 1px solid var(--line-soft);">
+      <p style="margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7;">
+        💡 <strong style="color: var(--ink);">使用技巧：</strong>
+        把这些 Prompt 保存到 WorkBuddy 的「常用指令」中，或者做成 TextExpander 快捷短语，需要时一键调用。
+        使用时记得把 <code style="background: var(--paper); padding: 2px 6px; border-radius: 4px; font-size: 12px;">{}</code> 中的内容替换成你自己的需求。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 📰 资讯速览 ========== -->
+<section class="section" id="news" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">📰</span>
+      <h2>资讯速览</h2>
+      <span class="section-num">第五部分</span>
+    </div>
+    <table class="md-table news-table">
+      <tr><th>#</th><th>资讯</th><th>来源</th><th>链接</th></tr>
+      <tr>
+        <td class="news-num">1</td>
+        <td><strong>OpenAI 发布 GPT-5.6 并合并 Codex 与 ChatGPT，推出 ChatGPT Work 智能体模式</strong></td>
+        <td class="news-source">OpenAI</td>
+        <td><a class="link" href="https://openai.com/zh-Hans-CN/index/codex-for-knowledge-work/" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">2</td>
+        <td><strong>Figma AI 推出组件生成新功能，支持从线框图一键生成高保真设计</strong></td>
+        <td class="news-source">Figma</td>
+        <td><a class="link" href="https://www.figma.com/ai" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">3</td>
+        <td><strong>Material Design 4 发布，AI 个性化界面生成能力全面升级</strong></td>
+        <td class="news-source">Google</td>
+        <td><a class="link" href="https://m3.material.io/" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">4</td>
+        <td><strong>WCAG 3.0 最新工作草案发布，采用铜/银/金三级评分模型</strong></td>
+        <td class="news-source">W3C</td>
+        <td><a class="link" href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">5</td>
+        <td><strong>2026 法国设计奖第一季获奖名单公布，首次增设 UI/UX 类别</strong></td>
+        <td class="news-source">French Design Awards</td>
+        <td><a class="link" href="https://www.muse.world/post/2026-french-design-awards-announces-season-1-winners" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">6</td>
+        <td><strong>Awwwards 2026 年度最佳网页设计评选进行中，交互创新成核心评审维度</strong></td>
+        <td class="news-source">Awwwards</td>
+        <td><a class="link" href="https://www.awwwards.com/websites/" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">7</td>
+        <td><strong>Midjourney V7 发布，界面设计稿生成质量大幅提升</strong></td>
+        <td class="news-source">Midjourney</td>
+        <td><a class="link" href="https://www.midjourney.com/" target="_blank">查看 →</a></td>
+      </tr>
+      <tr>
+        <td class="news-num">8</td>
+        <td><strong>Apple Vision Pro 2 发布，空间 UI 开发工具 Reality Composer 全面更新</strong></td>
+        <td class="news-source">Apple</td>
+        <td><a class="link" href="https://developer.apple.com/visionos/" target="_blank">查看 →</a></td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- ========== ✅ 行动建议 ========== -->
+<section class="section" id="actions" style="padding-top: 0;">
+  <div class="wrap-narrow">
+    <div class="section-label">
+      <span class="section-emoji">✅</span>
+      <h2>行动建议</h2>
+      <span class="section-num">第六部分</span>
+    </div>
+
+    <div class="todo-section">
+      <h4>建议一：体验 Figma 智能画布</h4>
+      <p class="muted">本周内组织一次 Figma 智能画布体验会，评估 Make Design、Make Summary 等功能在团队工作流中的落地场景。</p>
+      <p><strong>落地步骤</strong>：</p>
+      <ol class="todo-steps">
+        <li>从「生成组件变体」「自动排版」「会议纪要」三个低门槛场景切入</li>
+        <li>制定 1-2 个可量化的效率提升目标</li>
+        <li>建立 AI 设计工具使用指南和最佳实践库</li>
+      </ol>
+    </div>
+
+    <div class="todo-section">
+      <h4>建议二：审计产品可持续设计表现</h4>
+      <p class="muted">参考 Fairphone 6 的可持续设计思路，从材料、能耗、生命周期三个维度评估当前产品的可持续性表现。</p>
+      <p><strong>落地步骤</strong>：</p>
+      <ol class="todo-steps">
+        <li>梳理产品中可优化的可持续设计机会点</li>
+        <li>优先级排序，选取 1-2 个点进行优化试点</li>
+        <li>建立可持续设计评估清单</li>
+      </ol>
+    </div>
+
+    <div class="todo-section">
+      <h4>建议三：建立 AI 时代的「设计品味」提升机制</h4>
+      <p class="muted">当 AI 让「实现」变得廉价时，品味和策展能力成为最稀缺的资源。反 AI 同质化的核心是提升人的审美判断力。</p>
+      <p><strong>落地步骤</strong>：</p>
+      <ol class="todo-steps">
+        <li>每周组织 15 分钟「设计品味加油站」，分享 1-2 个优秀设计案例并讨论「好在哪里」</li>
+        <li>建立团队设计评审标准，从「能不能做」转向「值不值得做」</li>
+        <li>鼓励设计师培养系统思维和方向感，而非只关注视觉执行</li>
+      </ol>
+    </div>
+
+    <div class="todo-section">
+      <h4>建议四：探索减法设计实践</h4>
+      <p class="muted">参考 iA Notebook 的减法设计理念，重新审视当前产品是否有过度设计、功能堆砌的问题。</p>
+      <p><strong>落地步骤</strong>：</p>
+      <ol class="todo-steps">
+        <li>选取一个核心功能页面，进行「减法设计」练习</li>
+        <li>思考：哪些功能可以去掉？哪些信息可以简化？</li>
+        <li>对比优化前后的用户体验变化</li>
+      </ol>
+    </div>
+
+    <div class="todo-section">
+      <h4>建议五：研究 iF 设计趋势报告</h4>
+      <p class="muted">组织团队学习 2026 iF 设计趋势报告，将五大趋势（差异化、技能化、真实性、社区设计、关系设计）与产品设计结合思考。</p>
+      <p><strong>落地步骤</strong>：</p>
+      <ol class="todo-steps">
+        <li>每人认领一个趋势方向，准备 5 分钟分享</li>
+        <li>讨论：我们的产品可以从哪些方面呼应这些趋势？</li>
+        <li>选出 1-2 个可落地的趋势方向，纳入下季度设计规划</li>
+      </ol>
+    </div>
+
+    <div class="todo-section">
+      <h4>建议六：梳理 AI 设计工具能力时间轴</h4>
+      <p class="muted">根据模型能力进步节奏，重新规划产品功能上线优先级，将设计方案与当前模型能力对齐。</p>
+      <p><strong>落地步骤</strong>：</p>
+      <ol class="todo-steps">
+        <li>盘点当前在用的 AI 设计工具，记录各自能力边界</li>
+        <li>建立"模型能力时间轴"，标注关键能力里程碑</li>
+        <li>对齐产品 roadmap，按模型能力时间点规划功能上线</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+    </div>
+    <!-- /左侧主内容 -->
+
+    <!-- 右侧边栏 -->
+    <aside class="side-col">
+
+      <!-- 本期数据速览 -->
+      <div class="side-card">
+        <h4>📊 本期数据</h4>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-num">8</div>
+            <div class="stat-label">资讯速览</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">5</div>
+            <div class="stat-label">趋势洞察</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">3</div>
+            <div class="stat-label">深度案例</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1</div>
+            <div class="stat-label">工具评测</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 热门标签 -->
+      <div class="side-card">
+        <h4>🏷️ 热门标签</h4>
+        <div class="tag-cloud">
+          <a href="#cases">iF设计奖</a>
+          <a href="#insight">设计趋势</a>
+          <a href="#signals">Figma</a>
+          <a href="#insight">可持续设计</a>
+          <a href="#cases">反AI同质化</a>
+          <a href="#cases">减法设计</a>
+          <a href="#insight">AI设计</a>
+          <a href="#cases">金质奖</a>
+          <a href="#signals">智能画布</a>
+          <a href="#actions">行动建议</a>
+        </div>
+      </div>
+
+      <!-- 下一期预告 -->
+      <div class="side-card" style="background: linear-gradient(135deg, rgba(91, 140, 255, 0.1) 0%, rgba(255, 140, 66, 0.08) 100%); border-color: rgba(91, 140, 255, 0.2);">
+        <h4 style="color: var(--blue-strong);">📅 下一期预告</h4>
+        <div style="font-size: 13px; line-height: 1.7; color: var(--ink);">
+          <p style="margin-bottom: 8px;"><strong>第 003 期</strong></p>
+          <p style="color: var(--muted); font-size: 12px; margin-bottom: 12px;">2026.08.05 · Week 32</p>
+          <p style="font-size: 12px; color: var(--muted); line-height: 1.7;">
+            即将带来 IDEA 奖数字交互类别深度解读 + AI 设计工具横评，敬请期待。
+          </p>
+        </div>
+      </div>
+
+    </aside>
+    <!-- /右侧边栏 -->
+
+  </div>
+</div>
+<!-- /内容主体双栏布局 -->
+
+<!-- ========== 往期回顾 ========== -->
+<section class="section-head" id="archive">
+  <div class="wrap">
+    <div class="skicker">Past Issues · 往期回顾</div>
+    <h2>所有期数</h2>
+    <p class="sdesc">往期周报归档，按时间倒序排列。</p>
+  </div>
+</section>
+
+<section class="archive">
+  <div class="wrap">
+    <div class="archive-grid">
+      <a href="第1期-从奖杯到方法-AI驱动设计的趋势与实践.html" class="arc-card">
+        <div class="arc-body">
+          <div class="arc-date">2026.07.22 · 第 001 期 · WEEK 30</div>
+          <h3>从奖杯到方法</h3>
+          <p class="arc-summary">AI 驱动设计的趋势与实践，红点奖深度解读与腾讯 WorkBuddy 评测</p>
+          <div class="arc-tags">
+            <span>红点奖</span>
+            <span>AI设计</span>
+            <span>鸿蒙</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 页脚 ========== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">
+      <div>
+        <div class="fb-name">Design Weekly · AI 设计资讯专栏</div>
+        <div class="fb-sub">MIB IEDC TEAM · 设计资讯 · 每周五更新</div>
+      </div>
+    </div>
+    <div class="foot-meta">下期预告：<b>IDEA 奖数字交互类别深度解读 + AI 设计工具横评</b></div>
+  </div>
+</footer>
+
+</div><!-- /.main-content -->
+
+<!-- 回到顶部 -->
+<a href="#top" class="back-top" id="backTop">↑</a>
+
+<script>
+  // 深浅色模式切换
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+
+  function setTheme(mode) {
+    if (mode === 'light') {
+      document.body.classList.add('light-mode');
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'LIGHT';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.body.classList.remove('light-mode');
+      themeIcon.textContent = '🌙';
+      themeText.textContent = 'DARK';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  // 初始化：读取本地存储或跟随系统
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    setTheme('light');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const isLight = document.body.classList.contains('light-mode');
+    setTheme(isLight ? 'dark' : 'light');
+  });
+
+  // 侧边栏开关
+  const sidebar = document.getElementById('sidebar');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const sidebarFab = document.getElementById('sidebarFab');
+  const sidebarMask = document.getElementById('sidebarMask');
+  const ssLinks = document.querySelectorAll('.ss-link');
+
+  function openSidebar() {
+    document.body.classList.remove('sidebar-collapsed');
+    sidebar.classList.remove('collapsed');
+    if (window.innerWidth <= 960) sidebarMask.classList.add('show');
+  }
+  function closeSidebar() {
+    document.body.classList.add('sidebar-collapsed');
+    sidebar.classList.add('collapsed');
+    if (window.innerWidth <= 960) sidebarMask.classList.remove('show');
+  }
+
+  sidebarClose.addEventListener('click', closeSidebar);
+  sidebarFab.addEventListener('click', openSidebar);
+  sidebarMask.addEventListener('click', closeSidebar);
+
+  // 初始：移动端默认收起
+  if (window.innerWidth <= 960) closeSidebar();
+
+  // 链接点击：平滑跳转 + 移动端自动收起
+  ssLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = link.dataset.target;
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (window.innerWidth <= 960) closeSidebar();
+    });
+  });
+
+  // 滚动监听 - 高亮当前栏目
+  const sections = document.querySelectorAll('section[id]');
+  function updateActive() {
+    let current = '';
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 140 && rect.bottom >= 140) current = sec.id;
+    });
+    ssLinks.forEach(l => {
+      l.classList.toggle('active', l.dataset.target === current);
+    });
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+
+  // 回到顶部
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) backTop.classList.add('show');
+    else backTop.classList.remove('show');
+  }, { passive: true });
+</script>
+
+</body>
+</html>
