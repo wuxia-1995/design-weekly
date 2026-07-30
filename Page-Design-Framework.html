@@ -878,16 +878,16 @@
   /* === 往期归档卡片网格 === */
   .archive { padding: 0 0 120px; }
   .archive-grid {
-    display: grid; grid-template-columns: 1fr; gap: 20px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
   }
   .arc-card {
     display: block; padding: 0; background: var(--paper-2);
-    border: 1px solid var(--line); border-radius: 10px;
+    border: 1px solid var(--line-soft); border-radius: 8px;
     overflow: hidden;
     transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
   .arc-card:hover {
-    transform: translateY(-3px); box-shadow: 0 12px 32px rgba(91,140,255,0.10);
+    transform: translateY(-4px); box-shadow: 0 16px 40px #10182014;
     border-color: var(--blue-strong);
   }
   .arc-cover {
@@ -908,22 +908,22 @@
     font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
     color: rgba(255,255,255,.7); font-weight: 600;
   }
-  .arc-body { padding: 36px; }
+  .arc-body { padding: 24px 28px 28px; }
   .arc-body .arc-date {
     font-size: 12px; letter-spacing: .08em; color: var(--muted);
-    margin-bottom: 14px; font-weight: 600; text-transform: uppercase;
+    margin-bottom: 12px; font-weight: 600; text-transform: uppercase;
   }
   .arc-body h3 {
-    font-size: 20px; font-weight: 650; letter-spacing: -.02em;
+    font-size: 19px; font-weight: 650; letter-spacing: -.02em;
     line-height: 1.3; margin-bottom: 10px;
   }
   .arc-body .arc-summary {
-    font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 20px;
+    font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px;
   }
-  .arc-body .arc-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .arc-body .arc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .arc-body .arc-tags span {
-    font-size: 12px; letter-spacing: .04em; padding: 5px 12px;
-    background: rgba(255,255,255,0.06); color: var(--ink-2); border-radius: 100px; font-weight: 500;
+    font-size: 11px; letter-spacing: .06em; padding: 3px 10px;
+    background: #1018200b; color: var(--muted); border-radius: 100px; font-weight: 600;
   }
 
   .empty-state {
@@ -935,7 +935,7 @@
 
   /* === 页脚 === */
   footer {
-    padding: 64px 0 56px;
+    padding: 64px 0 56px; border-top: 1px solid var(--line);
     background: var(--paper-2);
   }
   footer .wrap {
@@ -2244,13 +2244,15 @@
 <!-- ========== 往期回顾 ========== -->
 <section class="section-head" id="archive">
   <div class="wrap">
-    <div class="content-layout">
-      <div class="main-col">
-        <div class="skicker">Past Issues · 往期回顾</div>
-        <h2>所有期数</h2>
-        <p class="sdesc">往期周报归档，按时间倒序排列。</p>
+    <div class="skicker">Past Issues · 往期回顾</div>
+    <h2>所有期数</h2>
+    <p class="sdesc">往期周报归档，按时间倒序排列。</p>
+  </div>
+</section>
 
-        <div class="archive-grid" style="margin-top: 48px;">
+<section class="archive">
+  <div class="wrap">
+    <div class="archive-grid">
           <a href="第2期-智能画布与设计新秩序.html" class="arc-card">
             <div class="arc-body">
               <div class="arc-date">2026.07.29 · 第 002 期 · WEEK 31</div>
@@ -2278,9 +2280,6 @@
             </div>
           </a>
         </div>
-      </div>
-      <aside class="side-col"></aside>
-    </div>
   </div>
 </section>
 
